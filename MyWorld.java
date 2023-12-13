@@ -13,14 +13,41 @@ public class MyWorld extends World
      * Constructor for objects of class MyWorld.
      * 
      */
+    Actor[] blocks;
+    BlockA blockA;
+    BlockB blockB;
+    BlockC blockC;
+    BlockD blockD;
+    BlockE blockE;
+    BlockF blockF;
+    BlockG blockG;
+    
     public MyWorld()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(400, 600, 1);        
+        super(400, 600, 1);
+        initilizeImages();
         createBackground();
         addLine();
-        addCha();
+        initilizeActors();
     }
+
+    public void act()
+    {
+        
+    }
+    
+    private void initilizeActors()
+    {
+        blocks = new Actor[]{blockA = new BlockA(), blockB = new BlockB(), blockC = new BlockC(),
+                  blockD = new BlockD(), blockE = new BlockE(), blockF = new BlockF()};
+    }
+    
+    private void initilizeImages()
+    {
+       
+    }
+    
 
     private void createBackground()
     {
@@ -48,28 +75,4 @@ public class MyWorld extends World
             addObject(line2, getWidth()/10 * i, getHeight()/2);
         }
     }
-
-    
-    private void addCha()
-    {
-        BlockA ch0;
-        BlockB ch1;
-        BlockC ch2;
-        BlockD ch3;
-        BlockE ch4;
-        BlockF ch5;
-        BlockG ch6;
-        Actor[] actor = { ch0 = new BlockA(),
-                ch1 = new BlockB(),
-                ch2 = new BlockC(),
-                ch3 = new BlockD(), 
-                ch4 = new BlockE(),
-                ch5 = new BlockF(),
-                ch6 = new BlockG()};
-        for(int i = 0; i < actor.length; i++)
-        {
-            addObject(actor[i], 40 * i + 22, 60);
-        }
-    }
-
 }

@@ -12,8 +12,21 @@ public class BlockB extends Actor
      * Act - do whatever the BlockB wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
+    GreenfootImage clickedImage = new GreenfootImage("images/block_clicked/click1.png");
+    GreenfootImage origImage = new GreenfootImage("images/block2.png");
     public void act()
     {
         // Add your action code here.
+        if(Greenfoot.mouseClicked(this))
+        {
+            if(Greenfoot.getMouseInfo().getButton() == 3)
+            {
+                setImage(clickedImage);
+            }
+            else
+            {
+                setImage(origImage);
+            }
+        }
     }
 }
