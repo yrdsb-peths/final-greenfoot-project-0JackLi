@@ -12,8 +12,8 @@ public class BlockE extends Actor
      * Act - do whatever the BlockE wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    GreenfootImage clickedImage = new GreenfootImage("images/block_clicked/click4.png");
-    GreenfootImage origImage = new GreenfootImage("images/block5.png");
+    GreenfootImage clickedImage = new GreenfootImage("images/block_clicked/click5.png");
+    GreenfootImage origImage;
     public void act()
     {
         // Add your action code here.
@@ -21,6 +21,10 @@ public class BlockE extends Actor
         {
             if(Greenfoot.getMouseInfo().getButton() == 3)
             {
+                if(origImage == null)
+                {
+                    origImage = getImage();
+                }
                 setImage(clickedImage);
             }
             else

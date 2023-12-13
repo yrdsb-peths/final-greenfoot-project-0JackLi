@@ -30,6 +30,8 @@ public class MyWorld extends World
         createBackground();
         addLine();
         initilizeActors();
+        addObject(blocks[0], 40, 20);
+        //blocks[0].setImage("images/ability1_model/ability1.png");
     }
 
     public void act()
