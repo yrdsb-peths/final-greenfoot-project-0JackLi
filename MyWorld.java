@@ -14,6 +14,7 @@ public class MyWorld extends World
      * 
      */
     Actor[] blocks;
+    Actor[][] blockPosition = new Actor[15][10];
     BlockA blockA;
     BlockB blockB;
     BlockC blockC;
@@ -21,6 +22,8 @@ public class MyWorld extends World
     BlockE blockE;
     BlockF blockF;
     BlockG blockG;
+    Frame frame, lastFrame;
+    private int clickCount = 0;
     
     public MyWorld()
     {    
@@ -29,14 +32,15 @@ public class MyWorld extends World
         initilizeImages();
         createBackground();
         addLine();
-        initilizeActors();
-        addObject(blocks[0], 40, 20);
-        //blocks[0].setImage("images/ability1_model/ability1.png");
+        randomBlocks();
     }
 
     public void act()
     {
-        
+        if(Greenfoot.mouseClicked(null))
+        {
+            checkClick();
+        }
     }
     
     private void initilizeActors()
@@ -50,7 +54,69 @@ public class MyWorld extends World
        
     }
     
-
+    private void randomBlocks()
+    {
+        int x = getWidth()/10 - 18;
+        int y = getHeight()/15 - 20;
+        for(int i = 0; i < 15; i++)
+        {
+            for(int u = 0; u < 10; u++)
+            {
+                initilizeActors();
+                int rand = Greenfoot.getRandomNumber(blocks.length-1);
+                addObject(blocks[rand], x, y); 
+                x += 40;
+            }
+            x = getWidth()/10 - 18;
+            y += getHeight()/15;
+        }
+    }
+    
+    private void checkBlockPosition(Actor[][] actors)
+    {
+        for(int i = 0; i < actors.length; i++)
+        {
+            for(int u = 0; u < actors[i].length; u++)
+            {
+            }
+        }
+    }
+    
+    private void checkClick()
+    {
+        int x = 0, y = 0;
+        for(int i = 0; i < 10; i++)
+        {
+            if(Greenfoot.getMouseInfo().getX() >= getWidth()/10 * i && Greenfoot.getMouseInfo().getX() < getWidth()/10 * (i+1))
+            {
+                x = getWidth()/10 * i;
+            }
+        }
+        
+        for(int i = 0; i < 15; i++)
+        {
+            if(Greenfoot.getMouseInfo().getY() >= getHeight()/15 *i && Greenfoot.getMouseInfo().getY() < getHeight()/15 * (i + 1))
+            {
+                y = getHeight()/15 * i;
+            }
+        }
+        if(clickCount >= 2)
+        {
+            removeObject(frame);
+            removeObject(lastFrame);
+        }
+        else{
+            lastFrame = frame;
+            frame = new Frame();
+            addObject(frame, x + 20, y + 20);
+        }
+        clickCount = (clickCount + 1)%3;
+    }
+    
+    private void removeBlocks()
+    {
+        
+    }
     private void createBackground()
     {
         Background background = new Background();
@@ -58,6 +124,7 @@ public class MyWorld extends World
         image.scale(getWidth(), getHeight());
         setBackground(image);
     }
+    
 
     private void addLine()
     {
