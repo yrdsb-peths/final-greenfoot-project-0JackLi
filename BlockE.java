@@ -29,7 +29,9 @@ public class BlockE extends Actor
             }
             else
             {
-                setImage(origImage);
+                if(origImage != null){
+                    setImage(origImage);
+                }
             }
         }
     }

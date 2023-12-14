@@ -29,7 +29,9 @@ public class BlockC extends Actor
             }
             else
             {
-                setImage(origImage);
+                if(origImage != null){
+                    setImage(origImage);
+                }
             }
         }
     }
