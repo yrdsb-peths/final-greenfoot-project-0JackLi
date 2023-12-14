@@ -1,5 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
+import java.util.ArrayList;
 /**
  * Write a description of class MyWorld here.
  * 
@@ -23,6 +23,7 @@ public class MyWorld extends World
     BlockF blockF;
     BlockG blockG;
     Frame frame, lastFrame;
+    ArrayList<Actor> list = new ArrayList<Actor>();
     private int clickCount = 0;
     
     public MyWorld()
@@ -33,13 +34,17 @@ public class MyWorld extends World
         createBackground();
         addLine();
         randomBlocks();
+        removeBlocks(blockPosition);
     }
 
     public void act()
     {
         if(Greenfoot.mouseClicked(null))
         {
-            checkClick();
+            if(Greenfoot.getMouseInfo().getButton() == 1)
+            {
+                checkClick();
+            }
         }
     }
     
@@ -64,21 +69,16 @@ public class MyWorld extends World
             {
                 initilizeActors();
                 int rand = Greenfoot.getRandomNumber(blocks.length-1);
+                blockPosition[i][u] = blocks[rand];
+                if(blockPosition[i][u].equals(blockA))
+                {
+                    System.out.println("A");
+                }
                 addObject(blocks[rand], x, y); 
                 x += 40;
             }
             x = getWidth()/10 - 18;
             y += getHeight()/15;
-        }
-    }
-    
-    private void checkBlockPosition(Actor[][] actors)
-    {
-        for(int i = 0; i < actors.length; i++)
-        {
-            for(int u = 0; u < actors[i].length; u++)
-            {
-            }
         }
     }
     
@@ -110,12 +110,36 @@ public class MyWorld extends World
             frame = new Frame();
             addObject(frame, x + 20, y + 20);
         }
-        clickCount = (clickCount + 1)%3;
+        clickCount = (clickCount + 1) % 3;
     }
     
-    private void removeBlocks()
+    private void removeBlocks(Actor[][] actors)
     {
-        
+        int count = 0;
+        for(int i = 0; i < 15; i++)
+        {
+            for(int u = 0; u < 9; u++)
+            {
+               if(actors[i][u].equals(blockA))
+               {
+                   System.out.println("S");
+                   count++;
+                   list.add(actors[u][i]);
+               }
+               else
+               {
+                   count = 0;
+                   list.clear();
+               }
+               if(count >= 3)
+               {
+                   for(Actor k : list)
+                   {
+                       removeObject(k);
+                   }
+               }
+            }
+        }
     }
     private void createBackground()
     {
@@ -125,7 +149,6 @@ public class MyWorld extends World
         setBackground(image);
     }
     
-
     private void addLine()
     {
         for(int i = 0; i < 16; i++)

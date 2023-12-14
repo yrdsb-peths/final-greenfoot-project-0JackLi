@@ -7,22 +7,18 @@ class.BlockD.image=block4.png
 class.BlockE.image=block5.png
 class.BlockF.image=block6.png
 class.BlockG.image=block7.png
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 class.Frame.image=frame.png
->>>>>>> 0fe5f8c108284668dcd1c1eae51fbebc0d754c5e
-=======
-class.Frame.image=frame.png
->>>>>>> 0fe5f8c108284668dcd1c1eae51fbebc0d754c5e
 class.Line.image=Line.png
 class.Line2.image=Line2.png
 dependency1.from=MyWorld
 dependency1.to=BlockA
 dependency1.type=UsesDependency
 dependency10.from=MyWorld
-dependency10.to=Line2
+dependency10.to=Line
 dependency10.type=UsesDependency
+dependency11.from=MyWorld
+dependency11.to=Line2
+dependency11.type=UsesDependency
 dependency2.from=MyWorld
 dependency2.to=BlockB
 dependency2.type=UsesDependency
@@ -42,31 +38,17 @@ dependency7.from=MyWorld
 dependency7.to=BlockG
 dependency7.type=UsesDependency
 dependency8.from=MyWorld
-dependency8.to=Background
+dependency8.to=Frame
 dependency8.type=UsesDependency
 dependency9.from=MyWorld
-dependency9.to=Line
+dependency9.to=Background
 dependency9.type=UsesDependency
-<<<<<<< HEAD
-<<<<<<< HEAD
 editor.fx.0.height=1056
 editor.fx.0.width=1936
 editor.fx.0.x=-8
 editor.fx.0.y=-8
-height=838
-=======
-=======
->>>>>>> 0fe5f8c108284668dcd1c1eae51fbebc0d754c5e
-editor.fx.0.height=838
-editor.fx.0.width=1550
-editor.fx.0.x=-7
-editor.fx.0.y=-7
-height=830
-<<<<<<< HEAD
->>>>>>> 0fe5f8c108284668dcd1c1eae51fbebc0d754c5e
-=======
->>>>>>> 0fe5f8c108284668dcd1c1eae51fbebc0d754c5e
-package.numDependencies=10
+height=1056
+package.numDependencies=11
 package.numTargets=14
 project.charset=windows-1252
 publish.hasSource=false
@@ -117,8 +99,6 @@ target13.type=ClassTarget
 target13.width=120
 target13.x=0
 target13.y=0
-<<<<<<< HEAD
-=======
 target14.height=70
 target14.name=BlockG
 target14.showInterface=false
@@ -126,10 +106,6 @@ target14.type=ClassTarget
 target14.width=120
 target14.x=0
 target14.y=0
-<<<<<<< HEAD
->>>>>>> 0fe5f8c108284668dcd1c1eae51fbebc0d754c5e
-=======
->>>>>>> 0fe5f8c108284668dcd1c1eae51fbebc0d754c5e
 target2.height=70
 target2.name=Background
 target2.showInterface=false
@@ -186,8 +162,8 @@ target9.type=ClassTarget
 target9.width=120
 target9.x=0
 target9.y=0
-version=3.1.0
-width=1548
+version=3.0.0
+width=1936
 world.lastInstantiated=MyWorld
 xPosition=0
 yPosition=0
