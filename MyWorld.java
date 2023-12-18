@@ -73,7 +73,7 @@ public class MyWorld extends World
                 int rand = Greenfoot.getRandomNumber(blocks.length-1);
                 blockPosition[i][u] = blocks[rand];
                 blockToString[i][u] = actorsToString(blockPosition[i][u]);
-                System.out.println(blockToString[i][u]);
+                //System.out.println(blockToString[i][u]);
                 addObject(blocks[rand], x, y); 
                 x += 40;
             }
@@ -113,7 +113,7 @@ public class MyWorld extends World
         }
         clickCount = (clickCount + 1) % 3;
     }
-    
+
     private String actorsToString(Actor actor)
     {
         if(actor.equals(blockA))
@@ -145,33 +145,40 @@ public class MyWorld extends World
             return "panda";
         }
     }
+
     private void removeBlocks()
     {
-       int count = 0;
-       for(int i = 0; i < 15; i++)
-       {
-           count = 0;
-           for(int u = 0; u < 9; u++)
-           {
-               if(blockToString[i][u].equals(blockToString[i][u + 1]) || blockToString[i][u].equals(blockToString[i][u-1]))
-               {
-                   count++;
-                   list.add(blockPosition[i][u]);
-               }
-               else 
-               {
-                  if(count >= 3)
-                  {
-                      for(int k = 0; k < list.size(); k++)
-                      {
-                          removeObject(list.get(k));
-                      }
-                  }
-                  list.clear();
-                  count = 0;
-               }
-           }
-       }
+        int count = 0;
+        for(int i = 0; i < 15; i++)
+        {
+            count = 0;
+            for(int u = 0; u < 9; u++)
+            {
+                if(blockToString[i][u].equals(blockToString[i][u + 1]))
+                {
+                    count++;
+                    list.add(blockPosition[i][u]);
+                }
+                else if(u > 0 && blockToString[i][u].equals(blockToString[i][u-1]))
+                {
+
+                    count++;
+                    list.add(blockPosition[i][u]);
+                }
+                else 
+                {
+                    if(count >= 3)
+                    {
+                        for(int k = 0; k < list.size(); k++)
+                        {
+                            removeObject(list.get(k));
+                        }
+                    }
+                    list.clear();
+                    count = 0;
+                }
+            }
+        }
     }
 
     private void createBackground()
