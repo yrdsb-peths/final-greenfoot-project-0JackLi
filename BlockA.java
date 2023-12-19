@@ -14,6 +14,10 @@ public class BlockA extends Actor
      */
     GreenfootImage clickedImage = new GreenfootImage("images/block_clicked/click1.png");
     GreenfootImage origImage;
+    public BlockA()
+    {
+        origImage = getImage();
+    }
     public void act()
     {
         // Add your action code here.
@@ -33,6 +37,10 @@ public class BlockA extends Actor
                     setImage(origImage);
                 }
             }
+        }
+        else if(Greenfoot.mouseClicked(null))
+        {
+            setImage(origImage);
         }
     }
 }

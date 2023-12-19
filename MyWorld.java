@@ -24,6 +24,8 @@ public class MyWorld extends World
     BlockE blockE;
     BlockF blockF;
     BlockG blockG;
+    Line line;
+    Line2 line2;
     Frame frame = new Frame();;
     ArrayList<Actor> removeList = new ArrayList<Actor>();
     private int clickCount = 0;
@@ -36,14 +38,16 @@ public class MyWorld extends World
         createBackground();
         addLine();
         randomBlocks();
+        checkRow(10, 15);
+        checkColumn(10, 15);
     }
 
     public void act()
     {
-        checkRow(10, 15);
-        checkColumn(10, 15);
+        checkBelow();
         if(Greenfoot.mouseClicked(null))
         {
+            System.out.println(Greenfoot.getMouseInfo().getActor());
             if(Greenfoot.getMouseInfo().getButton() == 1)
             {
                 checkClick();
@@ -81,6 +85,22 @@ public class MyWorld extends World
             }
             x = getWidth()/10 - 18;
             y += getHeight()/15;
+        }
+    }
+    
+    private void checkBelow()
+    {
+        for(int i = 0; i < blockPosition.length; i++)
+        {
+            for(int u = 0; u < blockPosition[i].length; u++)
+            {
+                if(blockPosition[i][u] == null && i > 0 && blockPosition[i-1][u] != null)
+                {
+                    blockPosition[i - 1][u].setLocation(blockPosition[i - 1][u].getX(), blockPosition[i - 1][u].getY() + 40);
+                    blockPosition[i][u] = blockPosition[i - 1][u];
+                    blockPosition[i - 1][u] = null;
+                }
+            }
         }
     }
 
@@ -218,7 +238,22 @@ public class MyWorld extends World
         {
             for(int i = 0; i < list.size(); i++)
             {
+                removeFromArray(list.get(i));
                 removeObject(list.get(i));
+            }
+        }
+    }
+    
+    private void removeFromArray(Actor actor)
+    {
+        for(int i = 0; i < blockPosition.length; i++)
+        {
+            for(int u = 0; u < blockPosition[i].length; u++)
+            {
+                if(blockPosition[i][u] != null && blockPosition[i][u].equals(actor))
+                {
+                    blockPosition[i][u] = null;
+                }
             }
         }
     }
@@ -235,7 +270,7 @@ public class MyWorld extends World
     {
         for(int i = 0; i < 16; i++)
         {
-            Line line = new Line();
+            line = new Line();
             GreenfootImage image = line.getImage();
             image.scale(900, 100);
             addObject(line, getWidth()/2, getHeight()/15 * i);
@@ -243,7 +278,7 @@ public class MyWorld extends World
 
         for(int i = 0; i < 11; i++)
         {
-            Line2 line2 = new Line2();
+            line2 = new Line2();
             GreenfootImage image = line2.getImage();
             image.scale(100, 900);
             addObject(line2, getWidth()/10 * i, getHeight()/2);
