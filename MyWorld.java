@@ -13,6 +13,7 @@ public class MyWorld extends World
      * Constructor for objects of class MyWorld.
      * 
      */
+    Actor[] clickedActors = new Actor[2];
     Actor[] blocks;
     Actor[][] blockPosition = new Actor[15][10];
     String[][] blockToString = new String[15][10];
@@ -23,8 +24,8 @@ public class MyWorld extends World
     BlockE blockE;
     BlockF blockF;
     BlockG blockG;
-    Frame frame, lastFrame;
-    ArrayList<Actor> list = new ArrayList<Actor>();
+    Frame frame = new Frame();;
+    ArrayList<Actor> removeList = new ArrayList<Actor>();
     private int clickCount = 0;
 
     public MyWorld()
@@ -39,6 +40,8 @@ public class MyWorld extends World
 
     public void act()
     {
+        checkRow(10, 15);
+        checkColumn(10, 15);
         if(Greenfoot.mouseClicked(null))
         {
             if(Greenfoot.getMouseInfo().getButton() == 1)
@@ -73,14 +76,12 @@ public class MyWorld extends World
                 int rand = Greenfoot.getRandomNumber(blocks.length-1);
                 blockPosition[i][u] = blocks[rand];
                 blockToString[i][u] = actorsToString(blockPosition[i][u]);
-                //System.out.println(blockToString[i][u]);
                 addObject(blocks[rand], x, y); 
                 x += 40;
             }
             x = getWidth()/10 - 18;
             y += getHeight()/15;
         }
-        removeBlocks();
     }
 
     private void checkClick()
@@ -101,17 +102,34 @@ public class MyWorld extends World
                 y = getHeight()/15 * i;
             }
         }
+        frame.setLocation(x + 20, y + 20);
+        addObject(frame, x + 20, y + 20);
+        clickCount++;
         if(clickCount >= 2)
         {
-            removeObject(frame);
-            removeObject(lastFrame);
+            clickedActors[1] = Greenfoot.getMouseInfo().getActor();
+            if(canMove(clickedActors))
+            {
+                removeObject(frame);
+                clickCount = 0;
+            }
+            else
+            {
+                clickCount = 1;
+            }
         }
-        else{
-            lastFrame = frame;
-            frame = new Frame();
-            addObject(frame, x + 20, y + 20);
+        clickedActors[0] = Greenfoot.getMouseInfo().getActor();
+    }
+
+    private boolean canMove(Actor[] actor)
+    {
+        if(actor[0].getX() + 40 == actor[1].getX() && actor[0].getY() == actor[1].getY() || actor[0].getX() - 40 == actor[1].getX()
+          && actor[0].getY() == actor[1].getY() || actor[0].getX() == actor[1].getX() && actor[0].getY() + 40 == actor[1].getY() ||
+          actor[0].getX() == actor[1].getX() && actor[0].getY() - 40 == actor[1].getY())
+        {
+            return true;
         }
-        clickCount = (clickCount + 1) % 3;
+        return false;
     }
 
     private String actorsToString(Actor actor)
@@ -146,37 +164,61 @@ public class MyWorld extends World
         }
     }
 
-    private void removeBlocks()
+    private void checkRow(int row, int column)
     {
         int count = 0;
-        for(int i = 0; i < 15; i++)
+        for(int i = 0; i < column; i++)
         {
             count = 0;
-            for(int u = 0; u < 9; u++)
+            for(int u = 0; u < row; u++)
             {
-                if(blockToString[i][u].equals(blockToString[i][u + 1]))
+                if(u < row - 1 && blockToString[i][u].equals(blockToString[i][u + 1]) || u > 0 && blockToString[i][u].equals(blockToString[i][u-1]))
                 {
                     count++;
-                    list.add(blockPosition[i][u]);
-                }
-                else if(u > 0 && blockToString[i][u].equals(blockToString[i][u-1]))
-                {
-
-                    count++;
-                    list.add(blockPosition[i][u]);
+                    removeList.add(blockPosition[i][u]);
                 }
                 else 
                 {
-                    if(count >= 3)
-                    {
-                        for(int k = 0; k < list.size(); k++)
-                        {
-                            removeObject(list.get(k));
-                        }
-                    }
-                    list.clear();
+                    removeBlocks(count, 3, removeList);
+                    removeList.clear();
                     count = 0;
                 }
+            }
+            removeBlocks(count, 3, removeList);
+        }
+    }
+    
+    private void checkColumn(int row, int column)
+    {
+        int count = 0;
+        for(int i = 0; i < row; i++)
+        {
+            count = 0;
+            for(int u = 0; u < column; u++)
+            {
+                if(u < column - 1 && blockToString[u][i].equals(blockToString[u + 1][i]) || u > 0 && blockToString[u][i].equals(blockToString[u - 1][i]))
+                {
+                    count++;
+                    removeList.add(blockPosition[u][i]);
+                }
+                else 
+                {
+                    removeBlocks(count, 3, removeList);
+                    removeList.clear();
+                    count = 0;
+                }
+            }
+            removeBlocks(count, 3, removeList);
+        }
+    }
+    
+    private void removeBlocks(int num, int limit, ArrayList<Actor> list)
+    {
+        if(num >= limit)
+        {
+            for(int i = 0; i < list.size(); i++)
+            {
+                removeObject(list.get(i));
             }
         }
     }
