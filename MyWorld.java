@@ -28,7 +28,8 @@ public class MyWorld extends World
     BlockG blockG;
     Line line;
     Line2 line2;
-    Frame frame = new Frame();;
+    Frame frame = new Frame();
+    //int count = -1;
     ArrayList<Actor> removeList = new ArrayList<Actor>();
     private int clickCount = 0;
     private boolean canSwitch = false;
@@ -41,20 +42,21 @@ public class MyWorld extends World
         createBackground();
         addLine();
         randomBlocks();
-        checkRow(10, 15);
-        checkColumn(10, 15);
+        //checkRow(10, 15);
+        //checkColumn(10, 15);
     }
 
     public void act()
     {
-        checkBelow();
+        //checkBelow();
         if(Greenfoot.mouseClicked(null))
         {
+            //count = 0;
             checkRow(10, 15);
-            checkColumn(10, 15);
+            //checkColumn(10, 15);
             if(Greenfoot.getMouseInfo().getButton() == 1)
             {
-                checkClick();
+                //checkClick();
             }
         }
     }
@@ -91,14 +93,14 @@ public class MyWorld extends World
             y += getHeight()/15;
         }
     }
-    
+
     private void convertToString(Actor[][] actor)
     {
         for(int i = 0; i < actor.length; i++)
         {
             for(int u = 0; u < actor[i].length; u++)
             {
-                
+
             }
         }
     }
@@ -158,7 +160,7 @@ public class MyWorld extends World
         }
         clickedActors[0] = Greenfoot.getMouseInfo().getActor();
     }
-    
+
     private void moveBlocks(Actor[] actor)
     {
         int x = actor[0].getX();
@@ -171,8 +173,8 @@ public class MyWorld extends World
     private boolean canMove(Actor[] actor)
     {
         if(actor[0].getX() + 40 == actor[1].getX() && actor[0].getY() == actor[1].getY() || actor[0].getX() - 40 == actor[1].getX()
-          && actor[0].getY() == actor[1].getY() || actor[0].getX() == actor[1].getX() && actor[0].getY() + 40 == actor[1].getY() ||
-          actor[0].getX() == actor[1].getX() && actor[0].getY() - 40 == actor[1].getY())
+        && actor[0].getY() == actor[1].getY() || actor[0].getX() == actor[1].getX() && actor[0].getY() + 40 == actor[1].getY() ||
+        actor[0].getX() == actor[1].getX() && actor[0].getY() - 40 == actor[1].getY())
         {
             return true;
         }
@@ -241,7 +243,7 @@ public class MyWorld extends World
             removeBlocks(count, 3, removeList);
         }
     }
-    
+
     private void checkColumn(int row, int column)
     {
         int count = 0;
@@ -250,10 +252,11 @@ public class MyWorld extends World
             count = 0;
             for(int u = 0; u < column; u++)
             {
+                
                 if(u < column - 1 && blockPosition[u][i] != null && blockPosition[u + 1][i] != null && 
                 blockPosition[u][i].getClass().equals(blockPosition[u + 1][i].getClass()) || 
-                    u > 0 && blockPosition[u][i] != null && blockPosition[u - 1][i] != null &&
-                    blockPosition[u][i].getClass().equals(blockPosition[u - 1][i].getClass()))
+                u > 0 && blockPosition[u][i] != null && blockPosition[u - 1][i] != null &&
+                blockPosition[u][i].getClass().equals(blockPosition[u - 1][i].getClass()))
                 {
                     count++;
                     removeList.add(blockPosition[u][i]);
@@ -268,7 +271,7 @@ public class MyWorld extends World
             removeBlocks(count, 3, removeList);
         }
     }
-    
+
     private void removeBlocks(int num, int limit, ArrayList<Actor> list)
     {
         if(num >= limit)
@@ -276,12 +279,14 @@ public class MyWorld extends World
             for(int i = 0; i < list.size(); i++)
             {
                 removeFromArray(list.get(i));
-                removeObject(list.get(i));
+                System.out.println(list.get(i));
+                Frame frame = new Frame();
+                addObject(frame, list.get(i).getX(), list.get(i).getY());
             }
             canSwitch = true;
         }
     }
-    
+
     private void switchElements(Actor[] actor)
     {
         int[] column = new int[2];
@@ -307,7 +312,7 @@ public class MyWorld extends World
         blockPosition[column[1]][row[1]] = lastActor;
         //convertToString(blockPosition);
     }
-    
+
     private void removeFromArray(Actor actor)
     {
         for(int i = 0; i < blockPosition.length; i++)
