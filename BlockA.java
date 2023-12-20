@@ -21,22 +21,9 @@ public class BlockA extends Actor
     public void act()
     {
         // Add your action code here.
-        if(Greenfoot.mouseClicked(this))
+        if(Greenfoot.mouseClicked(this) && Greenfoot.getMouseInfo().getButton() >= 3)
         {
-            if(Greenfoot.getMouseInfo().getButton() == 3)
-            {
-                if(origImage == null)
-                {
-                    origImage = getImage();
-                }
-                setImage(clickedImage);
-            }
-            else
-            {
-                if(origImage != null){
-                    setImage(origImage);
-                }
-            }
+            setImage(clickedImage);
         }
         else if(Greenfoot.mouseClicked(null))
         {

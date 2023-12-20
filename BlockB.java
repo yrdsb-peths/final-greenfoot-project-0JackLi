@@ -14,25 +14,20 @@ public class BlockB extends Actor
      */
     GreenfootImage clickedImage = new GreenfootImage("images/block_clicked/click2.png");
     GreenfootImage origImage;
+    public BlockB()
+    {
+        origImage = getImage();
+    }
     public void act()
     {
         // Add your action code here.
-        if(Greenfoot.mouseClicked(this))
+        if(Greenfoot.mouseClicked(this) && Greenfoot.getMouseInfo().getButton() >= 3)
         {
-            if(Greenfoot.getMouseInfo().getButton() == 3)
-            {
-                if(origImage == null)
-                {
-                    origImage = getImage();
-                }
-                setImage(clickedImage);
-            }
-            else
-            {
-                if(origImage != null){
-                    setImage(origImage);
-                }
-            }
+            setImage(clickedImage);
+        }
+        else if(Greenfoot.mouseClicked(null))
+        {
+            setImage(origImage);
         }
     }
 }

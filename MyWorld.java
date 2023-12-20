@@ -1,5 +1,7 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.ArrayList;
+import greenfoot.Actor;
+
 /**
  * Write a description of class MyWorld here.
  * 
@@ -29,6 +31,7 @@ public class MyWorld extends World
     Frame frame = new Frame();;
     ArrayList<Actor> removeList = new ArrayList<Actor>();
     private int clickCount = 0;
+    private boolean canSwitch = false;
 
     public MyWorld()
     {    
@@ -47,7 +50,8 @@ public class MyWorld extends World
         checkBelow();
         if(Greenfoot.mouseClicked(null))
         {
-            System.out.println(Greenfoot.getMouseInfo().getActor());
+            checkRow(10, 15);
+            checkColumn(10, 15);
             if(Greenfoot.getMouseInfo().getButton() == 1)
             {
                 checkClick();
@@ -79,7 +83,7 @@ public class MyWorld extends World
                 initilizeActors();
                 int rand = Greenfoot.getRandomNumber(blocks.length-1);
                 blockPosition[i][u] = blocks[rand];
-                blockToString[i][u] = actorsToString(blockPosition[i][u]);
+                //blockToString[i][u] = actorsToString(blockPosition[i][u]);
                 addObject(blocks[rand], x, y); 
                 x += 40;
             }
@@ -88,6 +92,17 @@ public class MyWorld extends World
         }
     }
     
+    private void convertToString(Actor[][] actor)
+    {
+        for(int i = 0; i < actor.length; i++)
+        {
+            for(int u = 0; u < actor[i].length; u++)
+            {
+                
+            }
+        }
+    }
+
     private void checkBelow()
     {
         for(int i = 0; i < blockPosition.length; i++)
@@ -102,11 +117,13 @@ public class MyWorld extends World
                 }
             }
         }
+        //convertToString(blockPosition);
     }
 
     private void checkClick()
     {
         int x = 0, y = 0;
+        canSwitch = false;
         for(int i = 0; i < 10; i++)
         {
             if(Greenfoot.getMouseInfo().getX() >= getWidth()/10 * i && Greenfoot.getMouseInfo().getX() < getWidth()/10 * (i+1))
@@ -128,9 +145,10 @@ public class MyWorld extends World
         if(clickCount >= 2)
         {
             clickedActors[1] = Greenfoot.getMouseInfo().getActor();
-            if(canMove(clickedActors))
+            if(canMove(clickedActors) && canSwitch)
             {
                 removeObject(frame);
+                moveBlocks(clickedActors);
                 clickCount = 0;
             }
             else
@@ -139,6 +157,15 @@ public class MyWorld extends World
             }
         }
         clickedActors[0] = Greenfoot.getMouseInfo().getActor();
+    }
+    
+    private void moveBlocks(Actor[] actor)
+    {
+        int x = actor[0].getX();
+        int y = actor[0].getY();
+        actor[0].setLocation(actor[1].getX(), actor[1].getY());
+        actor[1].setLocation(x, y);
+        switchElements(actor);
     }
 
     private boolean canMove(Actor[] actor)
@@ -154,34 +181,38 @@ public class MyWorld extends World
 
     private String actorsToString(Actor actor)
     {
-        if(actor.equals(blockA))
+        if(actor != null)
         {
-            return "fox";
+            if(actor.equals(blockA))
+            {
+                return "fox";
+            }
+            else if(actor.equals(blockB))
+            {
+                return "bear";
+            }
+            else if(actor.equals(blockC))
+            {
+                return "chicken";
+            }
+            else if(actor.equals(blockD))
+            {
+                return "rabbit";
+            }
+            else if(actor.equals(blockE))
+            {
+                return "mouse";
+            }
+            else if(actor.equals(blockF))
+            {
+                return "cat";
+            }
+            else
+            {
+                return "panda";
+            }
         }
-        else if(actor.equals(blockB))
-        {
-            return "bear";
-        }
-        else if(actor.equals(blockC))
-        {
-            return "chicken";
-        }
-        else if(actor.equals(blockD))
-        {
-            return "rabbit";
-        }
-        else if(actor.equals(blockE))
-        {
-            return "mouse";
-        }
-        else if(actor.equals(blockF))
-        {
-            return "cat";
-        }
-        else
-        {
-            return "panda";
-        }
+        return null;
     }
 
     private void checkRow(int row, int column)
@@ -192,7 +223,10 @@ public class MyWorld extends World
             count = 0;
             for(int u = 0; u < row; u++)
             {
-                if(u < row - 1 && blockToString[i][u].equals(blockToString[i][u + 1]) || u > 0 && blockToString[i][u].equals(blockToString[i][u-1]))
+                if(u < row - 1 && blockPosition[i][u] != null && blockPosition[i][u + 1] != null && 
+                blockPosition[i][u].getClass().equals(blockPosition[i][u + 1].getClass()) || 
+                u > 0 && blockPosition[i][u] != null && blockPosition[i][u - 1] != null &&
+                blockPosition[i][u].getClass().equals(blockPosition[i][u - 1].getClass()))
                 {
                     count++;
                     removeList.add(blockPosition[i][u]);
@@ -216,7 +250,10 @@ public class MyWorld extends World
             count = 0;
             for(int u = 0; u < column; u++)
             {
-                if(u < column - 1 && blockToString[u][i].equals(blockToString[u + 1][i]) || u > 0 && blockToString[u][i].equals(blockToString[u - 1][i]))
+                if(u < column - 1 && blockPosition[u][i] != null && blockPosition[u + 1][i] != null && 
+                blockPosition[u][i].getClass().equals(blockPosition[u + 1][i].getClass()) || 
+                    u > 0 && blockPosition[u][i] != null && blockPosition[u - 1][i] != null &&
+                    blockPosition[u][i].getClass().equals(blockPosition[u - 1][i].getClass()))
                 {
                     count++;
                     removeList.add(blockPosition[u][i]);
@@ -241,7 +278,34 @@ public class MyWorld extends World
                 removeFromArray(list.get(i));
                 removeObject(list.get(i));
             }
+            canSwitch = true;
         }
+    }
+    
+    private void switchElements(Actor[] actor)
+    {
+        int[] column = new int[2];
+        int[] row = new int[2];
+        for(int i = 0; i < blockPosition.length; i++)
+        {
+            for(int u = 0; u < blockPosition[i].length; u++)
+            {
+                if(actor[0].equals(blockPosition[i][u]))
+                {
+                    column[0] = i;
+                    row[0] = u;
+                }
+                else if(actor[1].equals(blockPosition[i][u]))
+                {
+                    column[1] = i;
+                    row[1] = u;
+                }
+            }
+        }
+        Actor lastActor = blockPosition[column[0]][row[0]];
+        blockPosition[column[0]][row[0]] = blockPosition[column[1]][row[1]];
+        blockPosition[column[1]][row[1]] = lastActor;
+        //convertToString(blockPosition);
     }
     
     private void removeFromArray(Actor actor)
@@ -253,6 +317,7 @@ public class MyWorld extends World
                 if(blockPosition[i][u] != null && blockPosition[i][u].equals(actor))
                 {
                     blockPosition[i][u] = null;
+                    blockToString[i][u] = null;
                 }
             }
         }
