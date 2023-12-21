@@ -42,13 +42,13 @@ public class MyWorld extends World
         createBackground();
         addLine();
         randomBlocks();
-        checkRow(10, 15, true);
-        checkColumn(10, 15, true);
+        //checkRow(10, 15, true);
+        //checkColumn(10, 15, true);
     }
 
     public void act()
     {
-        checkBelow();
+        //checkBelow();
         checkRow(10, 15, true);
         checkColumn(10, 15, true);
         if(Greenfoot.mouseClicked(null))
@@ -59,7 +59,7 @@ public class MyWorld extends World
             }
         }
     }
-
+    
     private void initilizeActors()
     {
         blocks = new Actor[]{blockA = new BlockA(), blockB = new BlockB(), blockC = new BlockC(),
@@ -160,7 +160,10 @@ public class MyWorld extends World
             removeObject(frame);
             clickCount = 0;
         }
-        clickedActors[0] = Greenfoot.getMouseInfo().getActor();
+        else
+        {
+            clickedActors[0] = Greenfoot.getMouseInfo().getActor();
+        }
     }
 
     private boolean isClickedBlock(Actor actor)
@@ -246,7 +249,7 @@ public class MyWorld extends World
             count = 1;
             for(int u = 0; u < row; u++)
             {
-                if(blockPosition[i][u] != null)
+                if(blockPosition[i][u] != null && count == 1)
                 {
                     removeList.add(blockPosition[i][u]);
                 }
@@ -258,6 +261,17 @@ public class MyWorld extends World
                 }
                 else 
                 {
+                    if(count >= 4 && delete)
+                    {
+                        if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
+                        {
+                            removeList.remove(clickedActors[0]);
+                        }
+                        else if(clickedActors[1] != null)
+                        {
+                            removeList.remove(clickedActors[1]);
+                        }
+                    }
                     removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
                     count = 1;
@@ -305,7 +319,9 @@ public class MyWorld extends World
                 if(delete)
                 {
                     removeFromArray(list.get(i));
-                    removeObject(list.get(i));
+                    //removeObject(list.get(i));
+                    frame = new Frame();
+                    addObject(frame, list.get(i).getX(), list.get(i).getY());
                 }
             }
             canSwitch = true;
