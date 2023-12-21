@@ -42,21 +42,20 @@ public class MyWorld extends World
         createBackground();
         addLine();
         randomBlocks();
-        //checkRow(10, 15);
-        //checkColumn(10, 15);
+        checkRow(10, 15, true);
+        checkColumn(10, 15, true);
     }
 
     public void act()
     {
-        //checkBelow();
+        checkBelow();
+        checkRow(10, 15, true);
+        checkColumn(10, 15, true);
         if(Greenfoot.mouseClicked(null))
         {
-            //count = 0;
-            checkRow(10, 15);
-            //checkColumn(10, 15);
             if(Greenfoot.getMouseInfo().getButton() == 1)
             {
-                //checkClick();
+                checkClick();
             }
         }
     }
@@ -147,27 +146,41 @@ public class MyWorld extends World
         if(clickCount >= 2)
         {
             clickedActors[1] = Greenfoot.getMouseInfo().getActor();
-            if(canMove(clickedActors) && canSwitch)
+            if(isClickedBlock(clickedActors[0]) && isClickedBlock(clickedActors[1]))
             {
-                removeObject(frame);
-                moveBlocks(clickedActors);
-                clickCount = 0;
+                if(canMove(clickedActors))
+                {
+                    moveBlocks(clickedActors);
+                }
+                else
+                {
+                    clickCount = 1;
+                }
             }
-            else
-            {
-                clickCount = 1;
-            }
+            removeObject(frame);
+            clickCount = 0;
         }
         clickedActors[0] = Greenfoot.getMouseInfo().getActor();
     }
 
+    private boolean isClickedBlock(Actor actor)
+    {
+        for(int i = 0; i < blocks.length; i++)
+        {
+            if(actor.getClass().equals(blocks[i].getClass()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     private void moveBlocks(Actor[] actor)
     {
         int x = actor[0].getX();
         int y = actor[0].getY();
         actor[0].setLocation(actor[1].getX(), actor[1].getY());
         actor[1].setLocation(x, y);
-        switchElements(actor);
+        //switchElements(actor);
     }
 
     private boolean canMove(Actor[] actor)
@@ -175,7 +188,15 @@ public class MyWorld extends World
         if(actor[0].getX() + 40 == actor[1].getX() && actor[0].getY() == actor[1].getY() || actor[0].getX() - 40 == actor[1].getX()
         && actor[0].getY() == actor[1].getY() || actor[0].getX() == actor[1].getX() && actor[0].getY() + 40 == actor[1].getY() ||
         actor[0].getX() == actor[1].getX() && actor[0].getY() - 40 == actor[1].getY())
-        {
+        {   
+            switchElements(actor); 
+            checkRow(10, 15, false);
+            checkColumn(10, 15, false);
+            if(!canSwitch)
+            {
+                switchElements(actor);
+                return false;
+            }
             return true;
         }
         return false;
@@ -217,71 +238,75 @@ public class MyWorld extends World
         return null;
     }
 
-    private void checkRow(int row, int column)
+    private void checkRow(int row, int column, boolean delete)
     {
-        int count = 0;
+        int count = 1;
         for(int i = 0; i < column; i++)
         {
-            count = 0;
+            count = 1;
             for(int u = 0; u < row; u++)
             {
-                if(u < row - 1 && blockPosition[i][u] != null && blockPosition[i][u + 1] != null && 
-                blockPosition[i][u].getClass().equals(blockPosition[i][u + 1].getClass()) || 
-                u > 0 && blockPosition[i][u] != null && blockPosition[i][u - 1] != null &&
-                blockPosition[i][u].getClass().equals(blockPosition[i][u - 1].getClass()))
+                if(blockPosition[i][u] != null)
                 {
-                    count++;
                     removeList.add(blockPosition[i][u]);
                 }
-                else 
-                {
-                    removeBlocks(count, 3, removeList);
-                    removeList.clear();
-                    count = 0;
-                }
-            }
-            removeBlocks(count, 3, removeList);
-        }
-    }
-
-    private void checkColumn(int row, int column)
-    {
-        int count = 0;
-        for(int i = 0; i < row; i++)
-        {
-            count = 0;
-            for(int u = 0; u < column; u++)
-            {
-                
-                if(u < column - 1 && blockPosition[u][i] != null && blockPosition[u + 1][i] != null && 
-                blockPosition[u][i].getClass().equals(blockPosition[u + 1][i].getClass()) || 
-                u > 0 && blockPosition[u][i] != null && blockPosition[u - 1][i] != null &&
-                blockPosition[u][i].getClass().equals(blockPosition[u - 1][i].getClass()))
+                if(u < row - 1 && blockPosition[i][u] != null && blockPosition[i][u + 1] != null && 
+                blockPosition[i][u].getClass().equals(blockPosition[i][u + 1].getClass())) 
                 {
                     count++;
-                    removeList.add(blockPosition[u][i]);
+                    removeList.add(blockPosition[i][u + 1]);
                 }
                 else 
                 {
-                    removeBlocks(count, 3, removeList);
+                    removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
-                    count = 0;
+                    count = 1;
                 }
             }
-            removeBlocks(count, 3, removeList);
+            removeBlocks(count, 3, removeList, delete);
         }
     }
 
-    private void removeBlocks(int num, int limit, ArrayList<Actor> list)
+    private void checkColumn(int row, int column, boolean delete)
+    {
+        int count = 1;
+        for(int i = 0; i < row; i++)
+        {
+            count = 1;
+            for(int u = 0; u < column; u++)
+            {
+                if(blockPosition[u][i] != null)
+                {
+                    removeList.add(blockPosition[u][i]);
+                }
+                if(u < column - 1 && blockPosition[u][i] != null && blockPosition[u + 1][i] != null && 
+                blockPosition[u][i].getClass().equals(blockPosition[u + 1][i].getClass()))
+                {
+                    count++;
+                    removeList.add(blockPosition[u + 1][i]);
+                }
+                else 
+                {
+                    removeBlocks(count, 3, removeList, delete);
+                    removeList.clear();
+                    count = 1;
+                }
+            }
+            removeBlocks(count, 3, removeList, delete);
+        }
+    }
+
+    private void removeBlocks(int num, int limit, ArrayList<Actor> list, boolean delete)
     {
         if(num >= limit)
         {
             for(int i = 0; i < list.size(); i++)
             {
-                removeFromArray(list.get(i));
-                System.out.println(list.get(i));
-                Frame frame = new Frame();
-                addObject(frame, list.get(i).getX(), list.get(i).getY());
+                if(delete)
+                {
+                    removeFromArray(list.get(i));
+                    removeObject(list.get(i));
+                }
             }
             canSwitch = true;
         }
