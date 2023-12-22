@@ -28,7 +28,27 @@ public class BlockA extends Actor
         }
         else if(Greenfoot.mouseClicked(null))
         {
-            setImage(origImage);
+            //setImage(origImage);
+        }
+        checkAbility();
+    }
+    
+    public void doing()
+    {
+        
+    }
+    
+    private void checkAbility()
+    {
+        if(verticalAbility || horizontalAbility)
+        {
+            setImage("images/ability1_model/ability1.png");
+            origImage = getImage();
+        }
+        else if(bombAbility)
+        {
+            setImage("images/ability2_model/ability1.png");
+            origImage = getImage();
         }
     }
 }

@@ -14,6 +14,7 @@ public class BlockE extends Actor
      */
     GreenfootImage clickedImage = new GreenfootImage("images/block_clicked/click5.png");
     GreenfootImage origImage;
+    public boolean verticalAbility, horizontalAbility, bombAbility;
     public BlockE()
     {
         origImage = getImage();
