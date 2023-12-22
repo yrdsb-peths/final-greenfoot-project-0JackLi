@@ -52,7 +52,7 @@ public class MyWorld extends World
         checkBelow();
         checkRow(10, 15, true);
         checkColumn(10, 15, true);
-        
+
         if(Greenfoot.mouseClicked(null))
         {
             if(Greenfoot.getMouseInfo().getButton() == 1)
@@ -126,7 +126,7 @@ public class MyWorld extends World
         }
         //convertToString(blockPosition);
     }
-    boolean bro = false;
+
     private void checkClick()
     {
         int x = 0, y = 0;
@@ -161,9 +161,9 @@ public class MyWorld extends World
                 /*
                 else
                 {
-                    clickCount = 1;
+                clickCount = 1;
                 }
-                */
+                 */
             }
             removeObject(frame);
             clickCount = 0;
@@ -204,7 +204,6 @@ public class MyWorld extends World
             switchElements(actor); 
             checkRow(10, 15, false);
             checkColumn(10, 15, false);
-            bro = true;
             if(!canSwitch)
             {
                 switchElements(actor);
@@ -214,7 +213,7 @@ public class MyWorld extends World
         }
         return false;
     }
-    
+
     private void switchElements(Actor[] actor)
     {
         int[] column = new int[2];
@@ -297,7 +296,7 @@ public class MyWorld extends World
                 }
                 else 
                 {
-                /*
+
                     if(count >= 4 && delete)
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
@@ -317,12 +316,13 @@ public class MyWorld extends World
                             removeList.remove(clickedActors[1]);
                         }
                     }
-                  /*
+                    /*
                     if(!delete)
                     {
-                        System.out.print(count);
+                    System.out.print(count);
                     }
-                */
+                     */
+
                     removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
                     count = 1;
@@ -333,12 +333,12 @@ public class MyWorld extends World
         /*
         if(!delete)
         {
-            System.out.println();
-            System.out.print("Row\n");
+        System.out.println();
+        System.out.print("Row\n");
         }
-        */
+         */
     }
-    
+
     private void checkColumn(int row, int column, boolean delete)
     {
         int count = 1;
@@ -359,7 +359,7 @@ public class MyWorld extends World
                 }
                 else 
                 {
-                    /*
+
                     if(count >= 4 && delete)
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
@@ -374,9 +374,9 @@ public class MyWorld extends World
                     /*
                     if(!delete)
                     {
-                        System.out.print(count);
+                    System.out.print(count);
                     }
-                    */
+                     */
                     removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
                     count = 1;
@@ -388,8 +388,36 @@ public class MyWorld extends World
         if(!delete){
         System.out.println();
         System.out.print("Column");
+        }
+         */
     }
-    */
+
+    private void checkAbility(boolean horizontal,boolean vertical, boolean bomb)
+    {
+        if(clickedActors[0].getClass().equals(blockA.getClass()))
+        {
+            BlockA a = new BlockA();
+            a.horizontalAbility = horizontal;
+            a.verticalAbility = vertical;
+            a.bombAbility = bomb;
+            addObject(a, clickedActors[0].getX(), clickedActors[0].getY());
+        }
+        removeObject(clickedActors[0]);
+        //clickedActors[0] = a;
+    }
+    
+    private void checkEquals(Actor[][] arr, Actor actor)
+    {
+        for(int i = 0; i < arr.length; i++)
+        {
+            for(int u = 0; u < arr[i].length; u++)
+            {
+                if(arr[i][u] != null && arr[i][u].equals(actor))
+                {
+                    blockPosition[i][u] = actor;
+                }
+            }
+        }
     }
 
     private void removeBlocks(int num, int limit, ArrayList<Actor> list, boolean delete)
@@ -402,19 +430,6 @@ public class MyWorld extends World
                 {
                     removeFromArray(list.get(i));
                     removeObject(list.get(i));
-                }
-                else if(bro)
-                {
-                    //frame = new Frame();
-                    //frame.setLocation(list.get(i).getX(), list.get(i).getY());
-                    for(int k = 0; k < blockPosition.length; k++)
-                    {
-                        for(int u = 0; u < blockPosition[k].length; u++)
-                        {
-                            System.out.print(blockPosition[k][u]);
-                        }
-                        System.out.println();
-                    }
                 }
             }
             canSwitch = true;
