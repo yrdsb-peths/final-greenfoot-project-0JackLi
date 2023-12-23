@@ -296,33 +296,18 @@ public class MyWorld extends World
                 }
                 else 
                 {
-
                     if(count >= 4 && delete)
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[0]);
-                            if(clickedActors[0].getClass().equals(blockA.getClass()))
-                            {
-                                BlockA a = new BlockA();
-                                a.horizontalAbility = true;
-                                addObject(a, clickedActors[0].getX(), clickedActors[0].getY());
-                                removeObject(clickedActors[0]);
-                                clickedActors[0] = a;
-                            }
+                            checkAbility(true, false, false);
                         }
                         else if(clickedActors[1] != null && clickedActors[1].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[1]);
                         }
                     }
-                    /*
-                    if(!delete)
-                    {
-                    System.out.print(count);
-                    }
-                     */
-
                     removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
                     count = 1;
@@ -330,13 +315,6 @@ public class MyWorld extends World
             }
             removeBlocks(count, 3, removeList, delete);
         }
-        /*
-        if(!delete)
-        {
-        System.out.println();
-        System.out.print("Row\n");
-        }
-         */
     }
 
     private void checkColumn(int row, int column, boolean delete)
@@ -359,7 +337,6 @@ public class MyWorld extends World
                 }
                 else 
                 {
-
                     if(count >= 4 && delete)
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
@@ -371,12 +348,6 @@ public class MyWorld extends World
                             removeList.remove(clickedActors[1]);
                         }
                     }
-                    /*
-                    if(!delete)
-                    {
-                    System.out.print(count);
-                    }
-                     */
                     removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
                     count = 1;
@@ -384,12 +355,6 @@ public class MyWorld extends World
             }
             removeBlocks(count, 3, removeList, delete);
         }
-        /*
-        if(!delete){
-        System.out.println();
-        System.out.print("Column");
-        }
-         */
     }
 
     private void checkAbility(boolean horizontal,boolean vertical, boolean bomb)
@@ -401,12 +366,13 @@ public class MyWorld extends World
             a.verticalAbility = vertical;
             a.bombAbility = bomb;
             addObject(a, clickedActors[0].getX(), clickedActors[0].getY());
+            checkEquals(blockPosition, clickedActors[0], a);
         }
         removeObject(clickedActors[0]);
         //clickedActors[0] = a;
     }
     
-    private void checkEquals(Actor[][] arr, Actor actor)
+    private void checkEquals(Actor[][] arr, Actor actor, Actor newActor)
     {
         for(int i = 0; i < arr.length; i++)
         {
@@ -414,7 +380,7 @@ public class MyWorld extends World
             {
                 if(arr[i][u] != null && arr[i][u].equals(actor))
                 {
-                    blockPosition[i][u] = actor;
+                    arr[i][u] = newActor;
                 }
             }
         }
