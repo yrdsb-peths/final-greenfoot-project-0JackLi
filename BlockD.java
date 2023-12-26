@@ -30,5 +30,19 @@ public class BlockD extends Actor
         {
             setImage(origImage);
         }
+        checkAbility();
+    }
+    private void checkAbility()
+    {
+        if(verticalAbility || horizontalAbility)
+        {
+            setImage("images/ability1_model/ability4.png");
+            origImage = getImage();
+        }
+        else if(bombAbility)
+        {
+            setImage("images/ability2_model/ability4.png");
+            origImage = getImage();
+        }
     }
 }

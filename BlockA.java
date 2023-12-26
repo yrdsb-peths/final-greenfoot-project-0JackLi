@@ -28,14 +28,9 @@ public class BlockA extends Actor
         }
         else if(Greenfoot.mouseClicked(null))
         {
-            //setImage(origImage);
+            setImage(origImage);
         }
         checkAbility();
-    }
-    
-    public void doing()
-    {
-        
     }
     
     private void checkAbility()

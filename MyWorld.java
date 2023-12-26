@@ -158,12 +158,6 @@ public class MyWorld extends World
                 {
                     moveBlocks(clickedActors);
                 }
-                /*
-                else
-                {
-                clickCount = 1;
-                }
-                 */
             }
             removeObject(frame);
             clickCount = 0;
@@ -301,11 +295,26 @@ public class MyWorld extends World
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[0]);
-                            checkAbility(true, false, false);
+                            if(count == 4)
+                            {
+                                checkAbility(clickedActors[0], true, false, false);
+                            }
+                            else if(count > 4)
+                            {
+                                checkAbility(clickedActors[0], false, false, true);
+                            }
                         }
                         else if(clickedActors[1] != null && clickedActors[1].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[1]);
+                            if(count == 4)
+                            {
+                                checkAbility(clickedActors[1], true, false, false);
+                            }
+                            else if(count > 4)
+                            {
+                                checkAbility(clickedActors[1], false, false, true);
+                            }
                         }
                     }
                     removeBlocks(count, 3, removeList, delete);
@@ -342,10 +351,26 @@ public class MyWorld extends World
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[0]);
+                            if(count == 4)
+                            {
+                                checkAbility(clickedActors[0], false, true, false);
+                            }
+                            else if(count > 4)
+                            {
+                                checkAbility(clickedActors[0], false, false, true);
+                            }
                         }
                         else if(clickedActors[1] != null && clickedActors[1].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[1]);
+                            if(count == 4)
+                            {
+                                checkAbility(clickedActors[1], false, true, false);
+                            }
+                            else if(count > 4)
+                            {
+                                checkAbility(clickedActors[1], false, false, true);
+                            }
                         }
                     }
                     removeBlocks(count, 3, removeList, delete);
@@ -357,21 +382,54 @@ public class MyWorld extends World
         }
     }
 
-    private void checkAbility(boolean horizontal,boolean vertical, boolean bomb)
+    private void checkAbility(Actor actor, boolean horizontal,boolean vertical, boolean bomb)
     {
-        if(clickedActors[0].getClass().equals(blockA.getClass()))
+        Actor obj = null;
+        if(actor.getClass().equals(blockA.getClass()))
         {
             BlockA a = new BlockA();
             a.horizontalAbility = horizontal;
             a.verticalAbility = vertical;
             a.bombAbility = bomb;
-            addObject(a, clickedActors[0].getX(), clickedActors[0].getY());
-            checkEquals(blockPosition, clickedActors[0], a);
+            obj = a;
         }
-        removeObject(clickedActors[0]);
-        //clickedActors[0] = a;
+        else if(actor.getClass().equals(blockB.getClass()))
+        {
+            BlockB b = new BlockB();
+            b.horizontalAbility = horizontal;
+            b.verticalAbility = vertical;
+            b.bombAbility = bomb;
+            obj = b;
+        }
+        else if(actor.getClass().equals(blockC.getClass()))
+        {
+            BlockC c = new BlockC();
+            c.horizontalAbility = horizontal;
+            c.verticalAbility = vertical;
+            c.bombAbility = bomb;
+            obj = c;
+        }
+        else if(actor.getClass().equals(blockD.getClass()))
+        {
+            BlockD d = new BlockD();
+            d.horizontalAbility = horizontal;
+            d.verticalAbility = vertical;
+            d.bombAbility = bomb;
+            obj = d;
+        }
+        else
+        {
+            BlockE e = new BlockE();
+            e.horizontalAbility = horizontal;
+            e.verticalAbility = vertical;
+            e.bombAbility = bomb;
+            obj = e;
+        }
+        addObject(obj, actor.getX(), actor.getY());
+        checkEquals(blockPosition, actor, obj);
+        removeObject(actor);
     }
-    
+
     private void checkEquals(Actor[][] arr, Actor actor, Actor newActor)
     {
         for(int i = 0; i < arr.length; i++)
