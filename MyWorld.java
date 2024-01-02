@@ -15,6 +15,7 @@ public class MyWorld extends World
      * Constructor for objects of class MyWorld.
      * 
      */
+    Actor animatedActor;
     Actor[] clickedActors = new Actor[2];
     Actor[] blocks;
     Actor[][] blockPosition = new Actor[15][10];
@@ -33,7 +34,14 @@ public class MyWorld extends World
     ArrayList<Actor> removeList = new ArrayList<Actor>();
     private int clickCount = 0;
     private boolean canSwitch = false;
-    boolean isTrue;
+    boolean isTrue, canMove = true, startAnimation;
+    private SimpleTimer timer = new SimpleTimer();
+    private ArrayList<ArrowLeft> left = new ArrayList<ArrowLeft>();
+    private ArrayList<ArrowRight> right = new ArrayList<ArrowRight>();
+    private ArrayList<Actor> animatedVActors = new ArrayList<Actor>();
+    private ArrayList<Actor> animatedHActors = new ArrayList<Actor>();
+    private ArrayList<ArrowUp> up = new ArrayList<ArrowUp>();
+    private ArrayList<ArrowDown> down = new ArrayList<ArrowDown>();
 
     public MyWorld()
     {    
@@ -52,7 +60,6 @@ public class MyWorld extends World
         checkBelow();
         checkRow(10, 15, true);
         checkColumn(10, 15, true);
-
         if(Greenfoot.mouseClicked(null))
         {
             if(Greenfoot.getMouseInfo().getButton() == 1)
@@ -63,6 +70,10 @@ public class MyWorld extends World
             {
                 isTrue = true;
             }
+        }
+        if(startAnimation)
+        {
+            abilityAnimation();
         }
     }
 
@@ -382,10 +393,14 @@ public class MyWorld extends World
         }
     }
 
-    private void checkAbility(Actor actor, boolean horizontal,boolean vertical, boolean bomb)
+    private void checkAbility(Actor actor, boolean horizontal, boolean vertical, boolean bomb)
     {
         Actor obj = null;
-        if(actor.getClass().equals(blockA.getClass()))
+        ArrowLeft leftArrow;
+        ArrowRight rightArrow;
+        ArrowUp upArrow;
+        ArrowDown downArrow;
+        if(actor.getClass().equals(BlockA.class))
         {
             BlockA a = new BlockA();
             a.horizontalAbility = horizontal;
@@ -393,7 +408,7 @@ public class MyWorld extends World
             a.bombAbility = bomb;
             obj = a;
         }
-        else if(actor.getClass().equals(blockB.getClass()))
+        else if(actor.getClass().equals(BlockB.class))
         {
             BlockB b = new BlockB();
             b.horizontalAbility = horizontal;
@@ -401,7 +416,7 @@ public class MyWorld extends World
             b.bombAbility = bomb;
             obj = b;
         }
-        else if(actor.getClass().equals(blockC.getClass()))
+        else if(actor.getClass().equals(BlockC.class))
         {
             BlockC c = new BlockC();
             c.horizontalAbility = horizontal;
@@ -409,7 +424,7 @@ public class MyWorld extends World
             c.bombAbility = bomb;
             obj = c;
         }
-        else if(actor.getClass().equals(blockD.getClass()))
+        else if(actor.getClass().equals(BlockD.class))
         {
             BlockD d = new BlockD();
             d.horizontalAbility = horizontal;
@@ -425,9 +440,97 @@ public class MyWorld extends World
             e.bombAbility = bomb;
             obj = e;
         }
+        if(horizontal)
+        {
+            leftArrow = new ArrowLeft();
+            rightArrow = new ArrowRight();
+            left.add(leftArrow);
+            right.add(rightArrow);
+            addObject(leftArrow, actor.getX() - 18, actor.getY() + 5);
+            addObject(rightArrow, actor.getX() + 15, actor.getY() + 5);
+            animatedHActors.add(obj);
+        }
+        else if(vertical)
+        {
+            upArrow = new ArrowUp();
+            downArrow = new ArrowDown();
+            up.add(upArrow);
+            down.add(downArrow);
+            addObject(upArrow, actor.getX() - 2, actor.getY() - 16);
+            addObject(downArrow, actor.getX() - 2, actor.getY() + 17);
+            animatedVActors.add(obj);
+        }
+        startAnimation = true;
         addObject(obj, actor.getX(), actor.getY());
         checkEquals(blockPosition, actor, obj);
         removeObject(actor);
+    }
+
+    private void abilityAnimation()
+    {
+        int[] x1 = new int[animatedHActors.size()];
+        int[] x2 = new int[animatedHActors.size()];
+        int[] y1 = new int[animatedVActors.size()];
+        int[] y2 = new int[animatedVActors.size()];
+
+        for(int i = 0; i < left.size(); i++){
+            x1[i] = left.get(i).getX();
+            x2[i] = right.get(i).getX();
+        }
+        for(int i = 0; i < up.size(); i++)
+        {
+            y1[i] = up.get(i).getY();
+            y2[i] = down.get(i).getY();
+            if(y2[i] - (animatedVActors.get(i).getY() + 17) < 0)
+            {
+                up.get(i).setLocation(animatedVActors.get(i).getX() - 2, animatedVActors.get(i).getY() - 18);
+                down.get(i).setLocation(animatedVActors.get(i).getX() - 2, animatedVActors.get(i).getY() + 17);
+            }
+        }
+        if(timer.millisElapsed() > 125)
+        {
+            for(int i = 0; i < left.size(); i++)
+            {
+                if((animatedHActors.get(i).getX() - 18) - left.get(i).getX() < 4 && canMove)
+                {
+                    left.get(i).setLocation(x1[i] - 1, animatedHActors.get(i).getY() + 5);
+                    right.get(i).setLocation(x2[i] + 1, animatedHActors.get(i).getY() + 5);
+                }
+                else if(x2[i] - (animatedHActors.get(i).getX() + 15) != 0)
+                {
+                    canMove = false;                   
+                    left.get(i).setLocation(x1[i] + 1, animatedHActors.get(i).getY() + 5);
+                    right.get(i).setLocation(x2[i] - 1, animatedHActors.get(i).getY() + 5);
+                }
+                else
+                {
+                    canMove = true;
+                    left.get(i).setLocation(x1[i] - 1, animatedHActors.get(i).getY() + 5);
+                    right.get(i).setLocation(x2[i] + 1, animatedHActors.get(i).getY() + 5);
+                }
+            }
+            for(int i = 0; i < up.size(); i++)
+            {
+                if((animatedVActors.get(i).getY() - 16) - up.get(i).getY() < 4 && canMove)
+                {
+                    up.get(i).setLocation(animatedVActors.get(i).getX() - 2, y1[i] - 1);
+                    down.get(i).setLocation(animatedVActors.get(i).getX() - 2, y2[i] + 1);
+                }
+                else if(y2[i] - (animatedVActors.get(i).getY() + 17) != 0)
+                {
+                    canMove = false;
+                    up.get(i).setLocation(animatedVActors.get(i).getX() - 2, y1[i] + 1);
+                    down.get(i).setLocation(animatedVActors.get(i).getX() - 2, y2[i] - 1);
+                }
+                else
+                {
+                    canMove = true;
+                    up.get(i).setLocation(animatedVActors.get(i).getX() - 2, y1[i] + 1);
+                    down.get(i).setLocation(animatedVActors.get(i).getX() - 2, y2[i] - 1);
+                }
+            }
+            timer.mark();
+        }
     }
 
     private void checkEquals(Actor[][] arr, Actor actor, Actor newActor)
@@ -471,6 +574,27 @@ public class MyWorld extends World
                     blockPosition[i][u] = null;
                     blockToString[i][u] = null;
                 }
+            }
+        }
+        for(int i = 0; i < animatedHActors.size(); i++)
+        {
+            if(animatedHActors.get(i).equals(actor))
+            {
+                animatedHActors.remove(actor);
+                removeObject(left.get(i));
+                removeObject(right.get(i));
+                left.remove(i);
+                right.remove(i);
+            }
+        }
+        for(int i = 0; i < animatedVActors.size(); i++){
+            if(animatedVActors.get(i).equals(actor))
+            {
+                animatedVActors.remove(actor);
+                removeObject(up.get(i));
+                removeObject(down.get(i));
+                up.remove(i);
+                down.remove(i);
             }
         }
     }

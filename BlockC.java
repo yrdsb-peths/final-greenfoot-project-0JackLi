@@ -30,9 +30,9 @@ public class BlockC extends Actor
         {
             setImage(origImage);
         }
-        checkAbility();
+        setAbilityImage();
     }
-    private void checkAbility()
+    private void setAbilityImage()
     {
         if(verticalAbility || horizontalAbility)
         {
