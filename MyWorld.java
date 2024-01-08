@@ -50,16 +50,36 @@ public class MyWorld extends World
         initilizeImages();
         createBackground();
         addLine();
-        randomBlocks();
-        checkRow(10, 15, true);
-        checkColumn(10, 15, true);
+        BlockA a = new BlockA();
+        BlockB b = new BlockB();
+        BlockC c = new BlockC();
+        BlockD d = new BlockD();
+        BlockE e = new BlockE();
+        a.horizontalAbility = true;
+        b.horizontalAbility = true;
+        c.horizontalAbility = true;
+        d.horizontalAbility = true;
+        e.horizontalAbility = true;
+        addObject(a, 102, 100);
+        addObject(b, 142, 100);
+        addObject(c, 62, 100);
+        addObject(d, 182, 100);
+        addObject(e, 222, 100);
+        checkAbility(a, true, false, false);
+        checkAbility(b, true, false, false);
+        checkAbility(c, true, false, false);
+        checkAbility(d, true, false, false);
+        checkAbility(e, true, false, false);
+        //randomBlocks();
+        //checkRow(10, 15, true);
+        //checkColumn(10, 15, true);
     }
 
     public void act()
     {
-        checkBelow();
-        checkRow(10, 15, true);
-        checkColumn(10, 15, true);
+        //checkBelow();
+        //checkRow(10, 15, true);
+        //checkColumn(10, 15, true);
         if(Greenfoot.mouseClicked(null))
         {
             if(Greenfoot.getMouseInfo().getButton() == 1)
@@ -456,8 +476,8 @@ public class MyWorld extends World
             downArrow = new ArrowDown();
             up.add(upArrow);
             down.add(downArrow);
-            addObject(upArrow, actor.getX() - 2, actor.getY() - 16);
-            addObject(downArrow, actor.getX() - 2, actor.getY() + 17);
+            addObject(upArrow, actor.getX() - 1, actor.getY() - 16);
+            addObject(downArrow, actor.getX() - 1, actor.getY() + 17);
             animatedVActors.add(obj);
         }
         startAnimation = true;
@@ -483,8 +503,8 @@ public class MyWorld extends World
             y2[i] = down.get(i).getY();
             if(y2[i] - (animatedVActors.get(i).getY() + 17) < 0)
             {
-                up.get(i).setLocation(animatedVActors.get(i).getX() - 2, animatedVActors.get(i).getY() - 18);
-                down.get(i).setLocation(animatedVActors.get(i).getX() - 2, animatedVActors.get(i).getY() + 17);
+                up.get(i).setLocation(animatedVActors.get(i).getX() - 1, animatedVActors.get(i).getY() - 18);
+                down.get(i).setLocation(animatedVActors.get(i).getX() - 1, animatedVActors.get(i).getY() + 17);
             }
         }
         if(timer.millisElapsed() > 125)
@@ -513,20 +533,20 @@ public class MyWorld extends World
             {
                 if((animatedVActors.get(i).getY() - 16) - up.get(i).getY() < 4 && canMove)
                 {
-                    up.get(i).setLocation(animatedVActors.get(i).getX() - 2, y1[i] - 1);
-                    down.get(i).setLocation(animatedVActors.get(i).getX() - 2, y2[i] + 1);
+                    up.get(i).setLocation(animatedVActors.get(i).getX() - 1, y1[i] - 1);
+                    down.get(i).setLocation(animatedVActors.get(i).getX() - 1, y2[i] + 1);
                 }
                 else if(y2[i] - (animatedVActors.get(i).getY() + 17) != 0)
                 {
                     canMove = false;
-                    up.get(i).setLocation(animatedVActors.get(i).getX() - 2, y1[i] + 1);
-                    down.get(i).setLocation(animatedVActors.get(i).getX() - 2, y2[i] - 1);
+                    up.get(i).setLocation(animatedVActors.get(i).getX() - 1, y1[i] + 1);
+                    down.get(i).setLocation(animatedVActors.get(i).getX() - 1, y2[i] - 1);
                 }
                 else
                 {
                     canMove = true;
-                    up.get(i).setLocation(animatedVActors.get(i).getX() - 2, y1[i] + 1);
-                    down.get(i).setLocation(animatedVActors.get(i).getX() - 2, y2[i] - 1);
+                    //up.get(i).setLocation(animatedVActors.get(i).getX() - 2, y1[i] + 1);
+                    //down.get(i).setLocation(animatedVActors.get(i).getX() - 2, y2[i] - 1);
                 }
             }
             timer.mark();
