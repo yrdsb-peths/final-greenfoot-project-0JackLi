@@ -62,6 +62,7 @@ public class MyWorld extends World
         checkColumn(10, 15, true);
         if(Greenfoot.mouseClicked(null))
         {
+            randomBlocks();
             if(Greenfoot.getMouseInfo().getButton() == 1)
             {
                 checkClick();
@@ -98,12 +99,15 @@ public class MyWorld extends World
             count = 0;
             for(int u = 0; u < 10; u++)
             {
-                initilizeActors();
-                int rand = Greenfoot.getRandomNumber(blocks.length-1);
-                blockPosition[i][u] = blocks[rand];
-                //blockToString[i][u] = actorsToString(blockPosition[i][u]);
-                addObject(blocks[rand], x, y); 
-                x += 40;
+                if(blockPosition[i][u] == null)
+                {
+                    initilizeActors();
+                    int rand = Greenfoot.getRandomNumber(blocks.length-1);
+                    blockPosition[i][u] = blocks[rand];
+                    //blockToString[i][u] = actorsToString(blockPosition[i][u]);
+                    addObject(blocks[rand], x, y); 
+                    x += 40;
+                }
             }
             x = getWidth()/10 - 18;
             y += getHeight()/15;
@@ -383,6 +387,11 @@ public class MyWorld extends World
                                 checkAbility(clickedActors[1], false, false, true);
                             }
                         }
+                        if(count == 4)
+                        {
+                            checkAbility(removeList.get(0), false, true, false);
+                            removeList.remove(removeList.get(0));
+                        }
                     }
                     removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
@@ -549,13 +558,15 @@ public class MyWorld extends World
 
     private void removeBlocks(int num, int limit, ArrayList<Actor> list, boolean delete)
     {
-        if(num >= limit)
+        if(num >= limit && delete)
         {
             for(int i = 0; i < list.size(); i++)
             {
-                if(delete)
+                if(list.get(i) != null)
                 {
                     removeFromArray(list.get(i));
+                    //frame = new Frame();
+                    //addObject(frame, list.get(i).getX(), list.get(i).getY());
                     removeObject(list.get(i));
                 }
             }
