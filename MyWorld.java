@@ -50,39 +50,18 @@ public class MyWorld extends World
         initilizeImages();
         createBackground();
         addLine();
-        BlockA a = new BlockA();
-        BlockB b = new BlockB();
-        BlockC c = new BlockC();
-        BlockD d = new BlockD();
-        BlockE e = new BlockE();
-        a.horizontalAbility = true;
-        b.horizontalAbility = true;
-        c.horizontalAbility = true;
-        d.horizontalAbility = true;
-        e.horizontalAbility = true;
-        addObject(a, 102, 100);
-        addObject(b, 142, 100);
-        addObject(c, 62, 100);
-        addObject(d, 182, 100);
-        addObject(e, 222, 100);
-        checkAbility(a, true, false, false);
-        checkAbility(b, true, false, false);
-        checkAbility(c, true, false, false);
-        checkAbility(d, true, false, false);
-        checkAbility(e, true, false, false);
-        //randomBlocks();
-        //checkRow(10, 15, true);
-        //checkColumn(10, 15, true);
+        randomBlocks();
+        checkRow(10, 15, true);
+        checkColumn(10, 15, true);
     }
 
     public void act()
     {
-        //checkBelow();
-        //checkRow(10, 15, true);
-        //checkColumn(10, 15, true);
+        checkRow(10, 15, true);
+        checkColumn(10, 15, true);
+        checkBelow();
         if(Greenfoot.mouseClicked(null))
         {
-            randomBlocks();
             if(Greenfoot.getMouseInfo().getButton() == 1)
             {
                 checkClick();
@@ -108,7 +87,6 @@ public class MyWorld extends World
     {
 
     }
-
     private void randomBlocks()
     {
         int x = getWidth()/10 - 18;
@@ -126,8 +104,8 @@ public class MyWorld extends World
                     blockPosition[i][u] = blocks[rand];
                     //blockToString[i][u] = actorsToString(blockPosition[i][u]);
                     addObject(blocks[rand], x, y); 
-                    x += 40;
                 }
+                x += 40;
             }
             x = getWidth()/10 - 18;
             y += getHeight()/15;
@@ -159,6 +137,7 @@ public class MyWorld extends World
                 }
             }
         }
+        //randomBlocks();
         //convertToString(blockPosition);
     }
 
@@ -308,6 +287,7 @@ public class MyWorld extends World
     private void checkRow(int row, int column, boolean delete)
     {
         int count = 1;
+        boolean 
         for(int i = 0; i < column; i++)
         {
             count = 1;
@@ -322,6 +302,23 @@ public class MyWorld extends World
                 {
                     count++;
                     removeList.add(blockPosition[i][u + 1]);
+                    if(i < column - 2 && blockPosition[i + 1][u] != null && blockPosition[i + 2][u] != null && 
+                        blockPosition[i][u].getClass().equals(blockPosition[i + 1][u].getClass()) 
+                        && blockPosition[i + 1][u].getClass().equals(blockPosition[i + 2][u].getClass())) 
+                    {
+                   
+                        count += 2;
+                        removeList.add(blockPosition[i + 1][u]);
+                        removeList.add(blockPosition[i + 2][u]);
+                    }
+                    else if(i > 1 && blockPosition[i - 1][u] != null && blockPosition[i - 2][u] != null && 
+                            blockPosition[i][u].getClass().equals(blockPosition[i - 1][u].getClass()) 
+                            && blockPosition[i - 1][u].getClass().equals(blockPosition[i - 2][u].getClass()))
+                    {
+                        count += 2;
+                        removeList.add(blockPosition[i + 1][u]);
+                        removeList.add(blockPosition[i + 2][u]);
+                    }
                 }
                 else 
                 {
@@ -407,10 +404,13 @@ public class MyWorld extends World
                                 checkAbility(clickedActors[1], false, false, true);
                             }
                         }
-                        if(count == 4)
+                        else if(count == 4)
                         {
                             checkAbility(removeList.get(0), false, true, false);
                             removeList.remove(removeList.get(0));
+                        }
+                        else
+                        {
                         }
                     }
                     removeBlocks(count, 3, removeList, delete);
@@ -534,8 +534,8 @@ public class MyWorld extends World
                 else
                 {
                     canMove = true;
-                    left.get(i).setLocation(x1[i] - 1, animatedHActors.get(i).getY() + 5);
-                    right.get(i).setLocation(x2[i] + 1, animatedHActors.get(i).getY() + 5);
+                    //left.get(i).setLocation(x1[i] - 1, animatedHActors.get(i).getY() + 5);
+                    //right.get(i).setLocation(x2[i] + 1, animatedHActors.get(i).getY() + 5);
                 }
             }
             for(int i = 0; i < up.size(); i++)
@@ -578,17 +578,25 @@ public class MyWorld extends World
 
     private void removeBlocks(int num, int limit, ArrayList<Actor> list, boolean delete)
     {
-        if(num >= limit && delete)
+        if(num >= limit)
         {
             for(int i = 0; i < list.size(); i++)
             {
-                if(list.get(i) != null)
+                if(delete)
                 {
-                    removeFromArray(list.get(i));
-                    //frame = new Frame();
-                    //addObject(frame, list.get(i).getX(), list.get(i).getY());
-                    removeObject(list.get(i));
+                    if(list.get(i) != null)
+                    {
+                        removeFromArray(list.get(i));
+                        //frame = new Frame();
+                        //addObject(frame, list.get(i).getX(), list.get(i).getY());
+                        removeObject(list.get(i));
+                    }
                 }
+            }
+            if(delete)
+            {
+                clickedActors[0] = null;
+                clickedActors[1] = null;
             }
             canSwitch = true;
         }

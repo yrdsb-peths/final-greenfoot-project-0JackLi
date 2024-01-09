@@ -53,38 +53,6 @@ public class BlockA extends Actor
             origImage = getImage();
         }
     }
-    
-    private void checkAbility()
-    {
-        MyWorld world = (MyWorld)getWorld();
-        int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-        if(horizontalAbility)
-        {
-            world.addObject(left, getX() - 18, getY() + 5);
-            world.addObject(right, getX() + 15, getY() + 5);
-            x1 = left.getX();
-            x2 = right.getX();
-            if(timer.millisElapsed() > 125)
-            {
-                if((getX() - 18) - x1 < 3 && canMove)
-                {
-                    left.setLocation(x1 - 1, left.getY());
-                    right.setLocation(x2 + 1, right.getY());
-                }
-                else if(x2 - (getX() + 15) != 0)
-                {
-                    canMove = false;                   
-                    left.setLocation(x1 + 1, left.getY());
-                    right.setLocation(x2 - 1, right.getY());
-                }
-                else
-                {
-                    canMove = true;
-                }
-                timer.mark();
-            }
-        }
-    }
      /*if(timer.millisElapsed() > 125)
             {
                 if((getX() - 19) - x1 > 3)
