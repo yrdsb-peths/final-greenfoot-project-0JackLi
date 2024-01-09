@@ -36,6 +36,7 @@ public class MyWorld extends World
     private boolean canSwitch = false;
     boolean isTrue, canMove = true, startAnimation;
     private SimpleTimer timer = new SimpleTimer();
+    private SimpleTimer movingTimer = new SimpleTimer();
     private ArrayList<ArrowLeft> left = new ArrayList<ArrowLeft>();
     private ArrayList<ArrowRight> right = new ArrayList<ArrowRight>();
     private ArrayList<Actor> animatedVActors = new ArrayList<Actor>();
@@ -87,6 +88,7 @@ public class MyWorld extends World
     {
 
     }
+
     private void randomBlocks()
     {
         int x = getWidth()/10 - 18;
@@ -287,7 +289,7 @@ public class MyWorld extends World
     private void checkRow(int row, int column, boolean delete)
     {
         int count = 1;
-        boolean 
+        boolean isBomb = false;
         for(int i = 0; i < column; i++)
         {
             count = 1;
@@ -303,21 +305,22 @@ public class MyWorld extends World
                     count++;
                     removeList.add(blockPosition[i][u + 1]);
                     if(i < column - 2 && blockPosition[i + 1][u] != null && blockPosition[i + 2][u] != null && 
-                        blockPosition[i][u].getClass().equals(blockPosition[i + 1][u].getClass()) 
-                        && blockPosition[i + 1][u].getClass().equals(blockPosition[i + 2][u].getClass())) 
+                    blockPosition[i][u].getClass().equals(blockPosition[i + 1][u].getClass()) 
+                    && blockPosition[i + 1][u].getClass().equals(blockPosition[i + 2][u].getClass())) 
                     {
-                   
                         count += 2;
                         removeList.add(blockPosition[i + 1][u]);
                         removeList.add(blockPosition[i + 2][u]);
+                        isBomb = true;
                     }
                     else if(i > 1 && blockPosition[i - 1][u] != null && blockPosition[i - 2][u] != null && 
-                            blockPosition[i][u].getClass().equals(blockPosition[i - 1][u].getClass()) 
-                            && blockPosition[i - 1][u].getClass().equals(blockPosition[i - 2][u].getClass()))
+                    blockPosition[i][u].getClass().equals(blockPosition[i - 1][u].getClass()) 
+                    && blockPosition[i - 1][u].getClass().equals(blockPosition[i - 2][u].getClass()))
                     {
                         count += 2;
-                        removeList.add(blockPosition[i + 1][u]);
-                        removeList.add(blockPosition[i + 2][u]);
+                        removeList.add(blockPosition[i - 1][u]);
+                        removeList.add(blockPosition[i - 2][u]);
+                        isBomb = true;
                     }
                 }
                 else 
@@ -327,11 +330,11 @@ public class MyWorld extends World
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[0]);
-                            if(count == 4)
+                            if(count == 4 && !isBomb)
                             {
                                 checkAbility(clickedActors[0], true, false, false);
                             }
-                            else if(count > 4)
+                            else if(count > 4 && isBomb)
                             {
                                 checkAbility(clickedActors[0], false, false, true);
                             }
@@ -339,19 +342,34 @@ public class MyWorld extends World
                         else if(clickedActors[1] != null && clickedActors[1].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[1]);
-                            if(count == 4)
+                            if(count == 4 && isBomb)
                             {
                                 checkAbility(clickedActors[1], true, false, false);
                             }
-                            else if(count > 4)
+                            else if(count > 4 && isBomb)
                             {
                                 checkAbility(clickedActors[1], false, false, true);
                             }
                         }
+                        else if(count == 4 && !isBomb)
+                        {
+                            checkAbility(removeList.get(0), true, false, false);
+                            removeList.remove(removeList.get(0));
+                        }
+                        else if(count > 4 && isBomb)
+                        {
+                            checkAbility(removeList.get(0), false, false, true);
+                            removeList.remove(removeList.get(0));
+                        }
+                    }
+                    if(isBomb && count < 5)
+                    {
+                        removeList.clear();
                     }
                     removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
                     count = 1;
+                    isBomb = false;
                 }
             }
             removeBlocks(count, 3, removeList, delete);
@@ -401,7 +419,7 @@ public class MyWorld extends World
                             }
                             else if(count > 4)
                             {
-                                checkAbility(clickedActors[1], false, false, true);
+                                //checkAbility(clickedActors[1], false, false, true);
                             }
                         }
                         else if(count == 4)
@@ -409,8 +427,9 @@ public class MyWorld extends World
                             checkAbility(removeList.get(0), false, true, false);
                             removeList.remove(removeList.get(0));
                         }
-                        else
+                        else if(count > 4)
                         {
+                            
                         }
                     }
                     removeBlocks(count, 3, removeList, delete);
@@ -635,6 +654,28 @@ public class MyWorld extends World
                 up.remove(i);
                 down.remove(i);
             }
+        }
+    }
+    
+    private void movingBlockAnimation(Actor actor1, int endX, int endY)
+    {
+        int x = actor1.getX();
+        int y = actor1.getY();
+        if(actor1.getX() < endX)
+        {
+            actor1.setLocation(x + 1, y);
+        }
+        else if(actor1.getX() > endX)
+        {
+            actor1.setLocation(x - 1, y);
+        }
+        else if(actor1.getY() < endY)
+        {
+            actor1.setLocation(x, y + 1);
+        }
+        else 
+        {
+            actor1.setLocation(x, y - 1);
         }
     }
 
