@@ -43,6 +43,8 @@ public class MyWorld extends World
     private ArrayList<Actor> animatedHActors = new ArrayList<Actor>();
     private ArrayList<ArrowUp> up = new ArrayList<ArrowUp>();
     private ArrayList<ArrowDown> down = new ArrayList<ArrowDown>();
+    private ArrayList<Actor> blockDown = new ArrayList<Actor>();
+    private ArrayList<Integer> y = new ArrayList<Integer>();
 
     public MyWorld()
     {    
@@ -75,6 +77,11 @@ public class MyWorld extends World
         if(startAnimation)
         {
             abilityAnimation();
+        }
+        if(movingTimer.millisElapsed() > 10)
+        {
+            movingBlockAnimation();
+            movingTimer.mark();
         }
     }
 
@@ -114,17 +121,6 @@ public class MyWorld extends World
         }
     }
 
-    private void convertToString(Actor[][] actor)
-    {
-        for(int i = 0; i < actor.length; i++)
-        {
-            for(int u = 0; u < actor[i].length; u++)
-            {
-
-            }
-        }
-    }
-
     private void checkBelow()
     {
         for(int i = 0; i < blockPosition.length; i++)
@@ -133,7 +129,7 @@ public class MyWorld extends World
             {
                 if(blockPosition[i][u] == null && i > 0 && blockPosition[i-1][u] != null)
                 {
-                    blockPosition[i - 1][u].setLocation(blockPosition[i - 1][u].getX(), blockPosition[i - 1][u].getY() + 40);
+                    //blockPosition[i - 1][u].setLocation(blockPosition[i - 1][u].getX(), blockPosition[i - 1][u].getY() + 40);
                     blockPosition[i][u] = blockPosition[i - 1][u];
                     blockPosition[i - 1][u] = null;
                 }
@@ -429,7 +425,7 @@ public class MyWorld extends World
                         }
                         else if(count > 4)
                         {
-                            
+
                         }
                     }
                     removeBlocks(count, 3, removeList, delete);
@@ -439,6 +435,23 @@ public class MyWorld extends World
             }
             removeBlocks(count, 3, removeList, delete);
         }
+    }
+    
+    private boolean checkIfPossible()
+    {
+        for(int i = 0; i < blockPosition.length; i++)
+        {
+            for(int u = 0; u < blockPosition[i].length; u++)
+            {
+                if(i < blockPosition.length - 1 && u < blockPosition[i].length - 2 && blockPosition[i][u] != null && blockPosition[i][u + 1] != null 
+                    && blockPosition[i][u + 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass())
+                    && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 2].getClass()))
+                {
+                    return true;
+                }                
+            }
+        }
+        return false;
     }
 
     private void checkAbility(Actor actor, boolean horizontal, boolean vertical, boolean bomb)
@@ -656,26 +669,18 @@ public class MyWorld extends World
             }
         }
     }
-    
-    private void movingBlockAnimation(Actor actor1, int endX, int endY)
+
+    private void movingBlockAnimation()
     {
-        int x = actor1.getX();
-        int y = actor1.getY();
-        if(actor1.getX() < endX)
+        for(int i = 0; i < blockPosition.length; i++)
         {
-            actor1.setLocation(x + 1, y);
-        }
-        else if(actor1.getX() > endX)
-        {
-            actor1.setLocation(x - 1, y);
-        }
-        else if(actor1.getY() < endY)
-        {
-            actor1.setLocation(x, y + 1);
-        }
-        else 
-        {
-            actor1.setLocation(x, y - 1);
+            for(int u = 0; u < blockPosition[i].length; u++)
+            {
+                if(blockPosition[i][u] != null && blockPosition[i][u].getY() < 20 + 40 * i)
+                {
+                    blockPosition[i][u].setLocation(blockPosition[i][u].getX(), blockPosition[i][u].getY() + 10);
+                }
+            }
         }
     }
 
