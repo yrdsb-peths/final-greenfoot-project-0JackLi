@@ -49,9 +49,28 @@ public class MyWorld extends World
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(400, 600, 1);
         initilizeImages();
+        initilizeActors();
         createBackground();
         addLine();
-        randomBlocks();
+        //randomBlocks();
+        BlockA a = new BlockA();
+        BlockA a2 = new BlockA();
+        BlockA a3 = new BlockA();
+        BlockA a4 = new BlockA();
+        BlockA a5 = new BlockA();
+        BlockB b = new BlockB();
+        blockPosition[0][1] = a;
+        blockPosition[1][0] = a2;
+        blockPosition[1][1] = b;
+        blockPosition[1][2] = a3;
+        blockPosition[2][1] = a4;
+        blockPosition[3][1] = a5;
+        addObject(a, 62, 20);
+        addObject(a2, 22, 60);
+        addObject(b, 62, 60);
+        addObject(a3, 102, 60);
+        addObject(a4, 62, 100);
+        addObject(a5, 62, 140);
         checkRow(10, 15, true);
         checkColumn(10, 15, true);
     }
@@ -60,10 +79,9 @@ public class MyWorld extends World
     {
         checkRow(10, 15, true);
         checkColumn(10, 15, true);
-        checkBelow();
+        //checkBelow();
         if(Greenfoot.mouseClicked(null))
         {
-            System.out.println(checkIfPossible());
             if(Greenfoot.getMouseInfo().getButton() == 1)
             {
                 checkClick();
@@ -100,7 +118,7 @@ public class MyWorld extends World
         int x = getWidth()/10 - 18;
         int y = getHeight()/15 - 20;
         int count = 0;
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < 15; i++)
         {
             count = 0;
             for(int u = 0; u < 10; u++)
@@ -317,6 +335,15 @@ public class MyWorld extends World
                         removeList.add(blockPosition[i - 2][u]);
                         isBomb = true;
                     }
+                    else if(i > 0 && i < column - 1 && blockPosition[i - 1][u] != null && blockPosition[i + 1][u] != null
+                            && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u].getClass()) 
+                            && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u].getClass()))
+                    {
+                        count += 2;
+                        removeList.add(blockPosition[i - 1][u]);
+                        removeList.add(blockPosition[i + 1][u]);
+                        isBomb = true;
+                    }
                 }
                 else 
                 {
@@ -414,11 +441,12 @@ public class MyWorld extends World
                             }
                             else if(count > 4)
                             {
-                                //checkAbility(clickedActors[1], false, false, true);
+                                checkAbility(clickedActors[1], false, false, true);
                             }
                         }
                         else if(count == 4)
                         {
+                            System.out.println("wrong");
                             checkAbility(removeList.get(0), false, true, false);
                             removeList.remove(removeList.get(0));
                         }
@@ -726,6 +754,8 @@ public class MyWorld extends World
         {
             if(animatedHActors.get(i).equals(actor))
             {
+                TrailEffect effect = new TrailEffect();
+                addObject(effect, actor.getX(), actor.getY());
                 animatedHActors.remove(actor);
                 removeObject(left.get(i));
                 removeObject(right.get(i));
