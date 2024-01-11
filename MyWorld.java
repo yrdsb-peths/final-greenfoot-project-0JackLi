@@ -43,8 +43,6 @@ public class MyWorld extends World
     private ArrayList<Actor> animatedHActors = new ArrayList<Actor>();
     private ArrayList<ArrowUp> up = new ArrayList<ArrowUp>();
     private ArrayList<ArrowDown> down = new ArrayList<ArrowDown>();
-    private ArrayList<Actor> blockDown = new ArrayList<Actor>();
-    private ArrayList<Integer> y = new ArrayList<Integer>();
 
     public MyWorld()
     {    
@@ -65,6 +63,7 @@ public class MyWorld extends World
         checkBelow();
         if(Greenfoot.mouseClicked(null))
         {
+            System.out.println(checkIfPossible());
             if(Greenfoot.getMouseInfo().getButton() == 1)
             {
                 checkClick();
@@ -95,13 +94,13 @@ public class MyWorld extends World
     {
 
     }
-
+    //15 10
     private void randomBlocks()
     {
         int x = getWidth()/10 - 18;
         int y = getHeight()/15 - 20;
         int count = 0;
-        for(int i = 0; i < 15; i++)
+        for(int i = 0; i < 4; i++)
         {
             count = 0;
             for(int u = 0; u < 10; u++)
@@ -443,12 +442,88 @@ public class MyWorld extends World
         {
             for(int u = 0; u < blockPosition[i].length; u++)
             {
-                if(i < blockPosition.length - 1 && u < blockPosition[i].length - 2 && blockPosition[i][u] != null && blockPosition[i][u + 1] != null 
-                    && blockPosition[i][u + 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass())
+                if(i < blockPosition.length - 1 && u < blockPosition[i].length - 2 && blockPosition[i][u] != null && blockPosition[i + 1][u + 1] != null 
+                    && blockPosition[i + 1][u + 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass())
                     && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 2].getClass()))
                 {
                     return true;
-                }                
+                }
+                else if(i < blockPosition.length - 1 && u > blockPosition[i].length + 2 && blockPosition[i][u] != null && blockPosition[i + 1][u - 1] != null &&
+                        blockPosition[i + 1][u - 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u - 1].getClass()) && 
+                        blockPosition[i][u].equals(blockPosition[i + 1][u - 2].getClass()))
+                {
+                    return true;
+                }
+                else if(i > 0 && u < blockPosition[i].length - 2 && blockPosition[i][u] != null && blockPosition[i - 1][u + 1] != null && 
+                    blockPosition[i - 1][u + 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 1].getClass()) && 
+                    blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 2].getClass()))
+                {
+                    return true;
+                }
+                else if(i > 0 && u > blockPosition[i].length + 2 && blockPosition[i][u] != null && blockPosition[i][u - 1] != null && 
+                        blockPosition[i][u - 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i][u - 1].getClass()) && 
+                        blockPosition[i][u].getClass().equals(blockPosition[i][u - 2].getClass()))
+                {
+                    return true;
+                }
+                else if(u < blockPosition[i].length - 3 && blockPosition[i][u] != null && blockPosition[i][u + 2] != null && blockPosition[i][u + 3] != null 
+                        && blockPosition[i][u].getClass().equals(blockPosition[i][u + 2].getClass()) && blockPosition[i][u].equals(blockPosition[i][u + 3].getClass()))
+                {
+                    return true;
+                }
+                else if(u > blockPosition[i].length + 3 && blockPosition[i][u] != null && blockPosition[i][u - 2] != null && blockPosition[i][u - 3] != null
+                        && blockPosition[i][u].getClass().equals(blockPosition[i][u - 2].getClass()) && blockPosition[i][u].equals(blockPosition[i][u - 3].getClass()))
+                {
+                    return true;
+                }
+                else if(i < blockPosition.length - 1 && u < blockPosition[i].length - 1 && u > 0 && blockPosition[i][u] != null && blockPosition[i + 1][u - 1] != null
+                        && blockPosition[i + 1][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u - 1].getClass())
+                        && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass()))
+                {
+                    return true;
+                }
+                else if(i > 0 && u < blockPosition[i].length - 1 && u > 0 && blockPosition[i][u] != null && blockPosition[i - 1][u - 1] != null
+                        && blockPosition[i - 1][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u - 1].getClass()) 
+                        && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 1].getClass()))
+                {
+                    return true;
+                }
+                else if(i < blockPosition.length - 2 && u < blockPosition[i].length - 1 && blockPosition[i][u] != null 
+                        && blockPosition[i + 1][u + 1] != null && blockPosition[i + 2][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass()) 
+                        && blockPosition[i][u].getClass().equals(blockPosition[i + 2][u + 1].getClass()))
+                {
+                    return true;
+                }
+                else if(i < blockPosition.length - 2 && u > 0 && blockPosition[i][u] != null && blockPosition[i + 1][u - 1] != null 
+                        && blockPosition[i + 2][u - 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u - 1].getClass()) 
+                        && blockPosition[i][u].getClass().equals(blockPosition[i + 2][u - 1].getClass()))
+                {
+                    return true;
+                }
+                else if(i > 1 && u < blockPosition[i].length - 1 && blockPosition[i][u] != null && blockPosition[i - 1][u + 1] != null 
+                        && blockPosition[i - 2][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 1].getClass()) 
+                        && blockPosition[i][u].getClass().equals(blockPosition[i - 2][u + 1].getClass()))
+                {
+                    return true;
+                }
+                else if(i > 1 && u > 0 && blockPosition[i][u] != null && blockPosition[i - 1][u - 1] != null 
+                        && blockPosition[i - 2][u - 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u - 1].getClass()) 
+                        && blockPosition[i][u].getClass().equals(blockPosition[i - 2][u - 1].getClass()))
+                {
+                    return true;
+                }
+                else if(i < blockPosition.length - 3 && blockPosition[i][u] != null && blockPosition[i + 2][u] != null 
+                        && blockPosition[i + 3][u] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 2][u].getClass()) 
+                        && blockPosition[i][u].getClass().equals(blockPosition[i + 3][u].getClass()))
+                {
+                    return true;
+                }
+                else if(i > 2 && blockPosition[i][u] != null && blockPosition[i - 2][u] != null 
+                        && blockPosition[i - 3][u] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 2][u].getClass()) 
+                        && blockPosition[i][u].getClass().equals(blockPosition[i - 3][u].getClass()))
+                {
+                    return true;
+                }
             }
         }
         return false;
