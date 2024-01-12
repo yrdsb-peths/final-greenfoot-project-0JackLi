@@ -14,12 +14,24 @@ public class TrailEffect extends Actor
      */
     SimpleTimer timer = new SimpleTimer();
     GreenfootImage image = getImage();
+    public TrailEffect()
+    {
+        //((MyWorld) getWorld()).stop = true;
+    }
     public void act()
     {
         // Add your action code here.
         if(timer.millisElapsed() > 5)
         {
-            //image.scale(image.getWidth() + 40, image.getHeight());
+            if(image.getWidth() < 700)
+            {
+                //image.scale(image.getWidth() + 40, image.getHeight());
+            }
+            else
+            {
+                //((MyWorld) getWorld()).stop = false;
+                //((MyWorld) getWorld()).removeObject(this);
+            }
             timer.mark();
         }
     }

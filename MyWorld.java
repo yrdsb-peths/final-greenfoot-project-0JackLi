@@ -32,6 +32,8 @@ public class MyWorld extends World
     Frame frame = new Frame();
     //int count = -1;
     ArrayList<Actor> removeList = new ArrayList<Actor>();
+    boolean isStillMoving = true;
+    public static boolean stop = false;
     private int clickCount = 0;
     private boolean canSwitch = false;
     boolean isTrue, canMove = true, startAnimation;
@@ -52,43 +54,31 @@ public class MyWorld extends World
         initilizeActors();
         createBackground();
         addLine();
-        //randomBlocks();
-        BlockA a = new BlockA();
-        BlockA a2 = new BlockA();
-        BlockA a3 = new BlockA();
-        BlockA a4 = new BlockA();
-        BlockA a5 = new BlockA();
-        BlockB b = new BlockB();
-        blockPosition[0][1] = a;
-        blockPosition[1][0] = a2;
-        blockPosition[1][1] = b;
-        blockPosition[1][2] = a3;
-        blockPosition[2][1] = a4;
-        blockPosition[3][1] = a5;
-        addObject(a, 62, 20);
-        addObject(a2, 22, 60);
-        addObject(b, 62, 60);
-        addObject(a3, 102, 60);
-        addObject(a4, 62, 100);
-        addObject(a5, 62, 140);
+        randomBlocks();
         checkRow(10, 15, true);
         checkColumn(10, 15, true);
     }
 
     public void act()
     {
-        checkRow(10, 15, true);
-        checkColumn(10, 15, true);
-        //checkBelow();
-        if(Greenfoot.mouseClicked(null))
+        if(!stop)
         {
-            if(Greenfoot.getMouseInfo().getButton() == 1)
+            checkBelow();
+            if(!isStillMoving)
             {
-                checkClick();
+                checkRow(10, 15, true);
+                checkColumn(10, 15, true);
             }
-            if(Greenfoot.getMouseInfo().getButton() == 3)
+            if(Greenfoot.mouseClicked(null))
             {
-                isTrue = true;
+                if(Greenfoot.getMouseInfo().getButton() == 1)
+                {
+                    checkClick();
+                }
+                if(Greenfoot.getMouseInfo().getButton() == 3)
+                {
+                    isTrue = true;
+                }
             }
         }
         if(startAnimation)
@@ -312,38 +302,39 @@ public class MyWorld extends World
                 {
                     removeList.add(blockPosition[i][u]);
                 }
+
+                if(i < column - 2 && blockPosition[i][u] != null && blockPosition[i + 1][u] != null 
+                && blockPosition[i + 2][u] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u].getClass()) 
+                && blockPosition[i + 1][u].getClass().equals(blockPosition[i + 2][u].getClass())) 
+                {
+                    count += 2;
+                    removeList.add(blockPosition[i + 1][u]);
+                    removeList.add(blockPosition[i + 2][u]);
+                    isBomb = true;
+                }
+                else if(i > 1 && blockPosition[i][u] != null && blockPosition[i - 1][u] != null && blockPosition[i - 2][u] != null && 
+                blockPosition[i][u].getClass().equals(blockPosition[i - 1][u].getClass()) 
+                && blockPosition[i - 1][u].getClass().equals(blockPosition[i - 2][u].getClass()))
+                {   
+                    count += 2;
+                    removeList.add(blockPosition[i - 1][u]);
+                    removeList.add(blockPosition[i - 2][u]);
+                    isBomb = true;
+                }
+                else if(i > 0 && i < column - 1 && blockPosition[i][u] != null && blockPosition[i - 1][u] != null && blockPosition[i + 1][u] != null
+                && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u].getClass()) 
+                && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u].getClass()))
+                {
+                    count += 2;
+                    removeList.add(blockPosition[i - 1][u]);
+                    removeList.add(blockPosition[i + 1][u]);
+                    isBomb = true;
+                }
                 if(u < row - 1 && blockPosition[i][u] != null && blockPosition[i][u + 1] != null && 
                 blockPosition[i][u].getClass().equals(blockPosition[i][u + 1].getClass())) 
                 {
                     count++;
                     removeList.add(blockPosition[i][u + 1]);
-                    if(i < column - 2 && blockPosition[i + 1][u] != null && blockPosition[i + 2][u] != null && 
-                    blockPosition[i][u].getClass().equals(blockPosition[i + 1][u].getClass()) 
-                    && blockPosition[i + 1][u].getClass().equals(blockPosition[i + 2][u].getClass())) 
-                    {
-                        count += 2;
-                        removeList.add(blockPosition[i + 1][u]);
-                        removeList.add(blockPosition[i + 2][u]);
-                        isBomb = true;
-                    }
-                    else if(i > 1 && blockPosition[i - 1][u] != null && blockPosition[i - 2][u] != null && 
-                    blockPosition[i][u].getClass().equals(blockPosition[i - 1][u].getClass()) 
-                    && blockPosition[i - 1][u].getClass().equals(blockPosition[i - 2][u].getClass()))
-                    {
-                        count += 2;
-                        removeList.add(blockPosition[i - 1][u]);
-                        removeList.add(blockPosition[i - 2][u]);
-                        isBomb = true;
-                    }
-                    else if(i > 0 && i < column - 1 && blockPosition[i - 1][u] != null && blockPosition[i + 1][u] != null
-                            && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u].getClass()) 
-                            && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u].getClass()))
-                    {
-                        count += 2;
-                        removeList.add(blockPosition[i - 1][u]);
-                        removeList.add(blockPosition[i + 1][u]);
-                        isBomb = true;
-                    }
                 }
                 else 
                 {
@@ -429,7 +420,7 @@ public class MyWorld extends World
                             }
                             else if(count > 4)
                             {
-                                checkAbility(clickedActors[0], false, false, true);
+                                //checkAbility(clickedActors[0], false, false, true);
                             }
                         }
                         else if(clickedActors[1] != null && clickedActors[1].getClass().equals(removeList.get(0).getClass()))
@@ -441,12 +432,11 @@ public class MyWorld extends World
                             }
                             else if(count > 4)
                             {
-                                checkAbility(clickedActors[1], false, false, true);
+                                //checkAbility(clickedActors[1], false, false, true);
                             }
                         }
                         else if(count == 4)
                         {
-                            System.out.println("wrong");
                             checkAbility(removeList.get(0), false, true, false);
                             removeList.remove(removeList.get(0));
                         }
@@ -463,7 +453,7 @@ public class MyWorld extends World
             removeBlocks(count, 3, removeList, delete);
         }
     }
-    
+
     private boolean checkIfPossible()
     {
         for(int i = 0; i < blockPosition.length; i++)
@@ -471,84 +461,84 @@ public class MyWorld extends World
             for(int u = 0; u < blockPosition[i].length; u++)
             {
                 if(i < blockPosition.length - 1 && u < blockPosition[i].length - 2 && blockPosition[i][u] != null && blockPosition[i + 1][u + 1] != null 
-                    && blockPosition[i + 1][u + 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass())
-                    && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 2].getClass()))
+                && blockPosition[i + 1][u + 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass())
+                && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 2].getClass()))
                 {
                     return true;
                 }
                 else if(i < blockPosition.length - 1 && u > blockPosition[i].length + 2 && blockPosition[i][u] != null && blockPosition[i + 1][u - 1] != null &&
-                        blockPosition[i + 1][u - 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u - 1].getClass()) && 
-                        blockPosition[i][u].equals(blockPosition[i + 1][u - 2].getClass()))
+                blockPosition[i + 1][u - 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u - 1].getClass()) && 
+                blockPosition[i][u].equals(blockPosition[i + 1][u - 2].getClass()))
                 {
                     return true;
                 }
                 else if(i > 0 && u < blockPosition[i].length - 2 && blockPosition[i][u] != null && blockPosition[i - 1][u + 1] != null && 
-                    blockPosition[i - 1][u + 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 1].getClass()) && 
-                    blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 2].getClass()))
+                blockPosition[i - 1][u + 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 1].getClass()) && 
+                blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 2].getClass()))
                 {
                     return true;
                 }
                 else if(i > 0 && u > blockPosition[i].length + 2 && blockPosition[i][u] != null && blockPosition[i][u - 1] != null && 
-                        blockPosition[i][u - 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i][u - 1].getClass()) && 
-                        blockPosition[i][u].getClass().equals(blockPosition[i][u - 2].getClass()))
+                blockPosition[i][u - 2] != null && blockPosition[i][u].getClass().equals(blockPosition[i][u - 1].getClass()) && 
+                blockPosition[i][u].getClass().equals(blockPosition[i][u - 2].getClass()))
                 {
                     return true;
                 }
                 else if(u < blockPosition[i].length - 3 && blockPosition[i][u] != null && blockPosition[i][u + 2] != null && blockPosition[i][u + 3] != null 
-                        && blockPosition[i][u].getClass().equals(blockPosition[i][u + 2].getClass()) && blockPosition[i][u].equals(blockPosition[i][u + 3].getClass()))
+                && blockPosition[i][u].getClass().equals(blockPosition[i][u + 2].getClass()) && blockPosition[i][u].equals(blockPosition[i][u + 3].getClass()))
                 {
                     return true;
                 }
                 else if(u > blockPosition[i].length + 3 && blockPosition[i][u] != null && blockPosition[i][u - 2] != null && blockPosition[i][u - 3] != null
-                        && blockPosition[i][u].getClass().equals(blockPosition[i][u - 2].getClass()) && blockPosition[i][u].equals(blockPosition[i][u - 3].getClass()))
+                && blockPosition[i][u].getClass().equals(blockPosition[i][u - 2].getClass()) && blockPosition[i][u].equals(blockPosition[i][u - 3].getClass()))
                 {
                     return true;
                 }
                 else if(i < blockPosition.length - 1 && u < blockPosition[i].length - 1 && u > 0 && blockPosition[i][u] != null && blockPosition[i + 1][u - 1] != null
-                        && blockPosition[i + 1][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u - 1].getClass())
-                        && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass()))
+                && blockPosition[i + 1][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u - 1].getClass())
+                && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass()))
                 {
                     return true;
                 }
                 else if(i > 0 && u < blockPosition[i].length - 1 && u > 0 && blockPosition[i][u] != null && blockPosition[i - 1][u - 1] != null
-                        && blockPosition[i - 1][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u - 1].getClass()) 
-                        && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 1].getClass()))
+                && blockPosition[i - 1][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u - 1].getClass()) 
+                && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 1].getClass()))
                 {
                     return true;
                 }
                 else if(i < blockPosition.length - 2 && u < blockPosition[i].length - 1 && blockPosition[i][u] != null 
-                        && blockPosition[i + 1][u + 1] != null && blockPosition[i + 2][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass()) 
-                        && blockPosition[i][u].getClass().equals(blockPosition[i + 2][u + 1].getClass()))
+                && blockPosition[i + 1][u + 1] != null && blockPosition[i + 2][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u + 1].getClass()) 
+                && blockPosition[i][u].getClass().equals(blockPosition[i + 2][u + 1].getClass()))
                 {
                     return true;
                 }
                 else if(i < blockPosition.length - 2 && u > 0 && blockPosition[i][u] != null && blockPosition[i + 1][u - 1] != null 
-                        && blockPosition[i + 2][u - 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u - 1].getClass()) 
-                        && blockPosition[i][u].getClass().equals(blockPosition[i + 2][u - 1].getClass()))
+                && blockPosition[i + 2][u - 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 1][u - 1].getClass()) 
+                && blockPosition[i][u].getClass().equals(blockPosition[i + 2][u - 1].getClass()))
                 {
                     return true;
                 }
                 else if(i > 1 && u < blockPosition[i].length - 1 && blockPosition[i][u] != null && blockPosition[i - 1][u + 1] != null 
-                        && blockPosition[i - 2][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 1].getClass()) 
-                        && blockPosition[i][u].getClass().equals(blockPosition[i - 2][u + 1].getClass()))
+                && blockPosition[i - 2][u + 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u + 1].getClass()) 
+                && blockPosition[i][u].getClass().equals(blockPosition[i - 2][u + 1].getClass()))
                 {
                     return true;
                 }
                 else if(i > 1 && u > 0 && blockPosition[i][u] != null && blockPosition[i - 1][u - 1] != null 
-                        && blockPosition[i - 2][u - 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u - 1].getClass()) 
-                        && blockPosition[i][u].getClass().equals(blockPosition[i - 2][u - 1].getClass()))
+                && blockPosition[i - 2][u - 1] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 1][u - 1].getClass()) 
+                && blockPosition[i][u].getClass().equals(blockPosition[i - 2][u - 1].getClass()))
                 {
                     return true;
                 }
                 else if(i < blockPosition.length - 3 && blockPosition[i][u] != null && blockPosition[i + 2][u] != null 
-                        && blockPosition[i + 3][u] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 2][u].getClass()) 
-                        && blockPosition[i][u].getClass().equals(blockPosition[i + 3][u].getClass()))
+                && blockPosition[i + 3][u] != null && blockPosition[i][u].getClass().equals(blockPosition[i + 2][u].getClass()) 
+                && blockPosition[i][u].getClass().equals(blockPosition[i + 3][u].getClass()))
                 {
                     return true;
                 }
                 else if(i > 2 && blockPosition[i][u] != null && blockPosition[i - 2][u] != null 
-                        && blockPosition[i - 3][u] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 2][u].getClass()) 
-                        && blockPosition[i][u].getClass().equals(blockPosition[i - 3][u].getClass()))
+                && blockPosition[i - 3][u] != null && blockPosition[i][u].getClass().equals(blockPosition[i - 2][u].getClass()) 
+                && blockPosition[i][u].getClass().equals(blockPosition[i - 3][u].getClass()))
                 {
                     return true;
                 }
@@ -640,6 +630,11 @@ public class MyWorld extends World
         for(int i = 0; i < left.size(); i++){
             x1[i] = left.get(i).getX();
             x2[i] = right.get(i).getX();
+            if(x2[i] - (animatedHActors.get(i).getX() + 15) < 0)
+            {
+                left.get(i).setLocation(animatedHActors.get(i).getX() - 18, animatedHActors.get(i).getY() + 5);
+                right.get(i).setLocation(animatedHActors.get(i).getX() + 15, animatedHActors.get(i).getY() + 5);
+            }
         }
         for(int i = 0; i < up.size(); i++)
         {
@@ -647,7 +642,7 @@ public class MyWorld extends World
             y2[i] = down.get(i).getY();
             if(y2[i] - (animatedVActors.get(i).getY() + 17) < 0)
             {
-                up.get(i).setLocation(animatedVActors.get(i).getX() - 1, animatedVActors.get(i).getY() - 18);
+                up.get(i).setLocation(animatedVActors.get(i).getX() - 1, animatedVActors.get(i).getY() - 16);
                 down.get(i).setLocation(animatedVActors.get(i).getX() - 1, animatedVActors.get(i).getY() + 17);
             }
         }
@@ -725,13 +720,10 @@ public class MyWorld extends World
                         //frame = new Frame();
                         //addObject(frame, list.get(i).getX(), list.get(i).getY());
                         removeObject(list.get(i));
+                        clickedActors[0] = null;
+                        clickedActors[1] = null;
                     }
                 }
-            }
-            if(delete)
-            {
-                clickedActors[0] = null;
-                clickedActors[1] = null;
             }
             canSwitch = true;
         }
@@ -774,16 +766,17 @@ public class MyWorld extends World
             }
         }
     }
-
     private void movingBlockAnimation()
     {
+        isStillMoving = false;
         for(int i = 0; i < blockPosition.length; i++)
         {
             for(int u = 0; u < blockPosition[i].length; u++)
             {
                 if(blockPosition[i][u] != null && blockPosition[i][u].getY() < 20 + 40 * i)
                 {
-                    blockPosition[i][u].setLocation(blockPosition[i][u].getX(), blockPosition[i][u].getY() + 10);
+                    blockPosition[i][u].setLocation(blockPosition[i][u].getX(), blockPosition[i][u].getY() + 20);
+                    isStillMoving = true;
                 }
             }
         }

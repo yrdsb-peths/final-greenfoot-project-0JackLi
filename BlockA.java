@@ -53,19 +53,4 @@ public class BlockA extends Actor
             origImage = getImage();
         }
     }
-     /*if(timer.millisElapsed() > 125)
-            {
-                if((getX() - 19) - x1 > 3)
-                {
-                    x1 = getX() - 19;
-                }
-                if(x2 - (getX() + 14) > 3)
-                {
-                    x2 = getX() + 14;
-                }
-                left.setLocation(x1 - 1, left.getY());
-                right.setLocation(x2 + 1, left.getY());
-                timer.mark();
-            }
-            */
 }
