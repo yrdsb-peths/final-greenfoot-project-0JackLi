@@ -555,7 +555,7 @@ public class MyWorld extends World
         ArrowUp upArrow;
         ArrowDown downArrow;
         if(actor.getClass().equals(BlockA.class))
-        {
+        {           
             BlockA a = new BlockA();
             a.horizontalAbility = horizontal;
             a.verticalAbility = vertical;
@@ -729,8 +729,9 @@ public class MyWorld extends World
         }
     }
 
-    private void removeFromArray(Actor actor)
+    public void removeFromArray(Actor actor)
     {
+        int y = 0;
         for(int i = 0; i < blockPosition.length; i++)
         {
             for(int u = 0; u < blockPosition[i].length; u++)
@@ -739,6 +740,7 @@ public class MyWorld extends World
                 {
                     blockPosition[i][u] = null;
                     blockToString[i][u] = null;
+                    y = i;
                 }
             }
         }
@@ -747,12 +749,19 @@ public class MyWorld extends World
             if(animatedHActors.get(i).equals(actor))
             {
                 TrailEffect effect = new TrailEffect();
-                addObject(effect, actor.getX(), actor.getY());
                 animatedHActors.remove(actor);
                 removeObject(left.get(i));
                 removeObject(right.get(i));
                 left.remove(i);
                 right.remove(i);
+                addObject(effect, actor.getX(), actor.getY());
+                for(int u = 0; u < blockPosition[y].length; u++)
+                {
+                    if(blockPosition[y][u] != null)
+                    {
+                        removeFromArray(blockPosition[y][u]);
+                    }
+                }
             }
         }
         for(int i = 0; i < animatedVActors.size(); i++){
@@ -766,6 +775,7 @@ public class MyWorld extends World
             }
         }
     }
+
     private void movingBlockAnimation()
     {
         isStillMoving = false;
