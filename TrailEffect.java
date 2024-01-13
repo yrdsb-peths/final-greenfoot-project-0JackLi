@@ -16,39 +16,29 @@ public class TrailEffect extends Actor
     SimpleTimer timer = new SimpleTimer();
     GreenfootImage image = getImage();
     ArrayList<Actor> removeList = new ArrayList<Actor>();
-    public TrailEffect()
+    private boolean horizontal, vertical;
+    public TrailEffect(boolean horizontal, boolean vertical)
     {
+        this.horizontal = horizontal;
+        this.vertical = vertical;
         ((MyWorld) getWorld()).stop = true;
     }
-
     public void act()
     {
         // Add your action code here.
-        if(isTouching(BlockA.class))
+        if(timer.millisElapsed() > 25)
         {
-            removeTouching(BlockA.class);
-        }
-        else if(isTouching(BlockB.class))
-        {
-            removeTouching(BlockB.class);
-        }
-        else if(isTouching(BlockC.class))
-        {
-            removeTouching(BlockC.class);
-        }
-        else if(isTouching(BlockD.class))
-        {
-            removeTouching(BlockD.class);
-        }
-        else
-        {
-            removeTouching(BlockE.class);
-        }
-        if(timer.millisElapsed() > 200)
-        {
-            if(image.getWidth() < 700)
+            if(image.getWidth() < 1000 && horizontal || image.getHeight() < 1000 && vertical)
             {
-                image.scale(image.getWidth() + 40, image.getHeight());
+                if(horizontal)
+                {
+                    image.scale(image.getWidth() + 20, image.getHeight());
+                }
+                else if(vertical)
+                {
+                    image.scale(image.getWidth(), image.getHeight() + 30);
+                }
+                removeBlocks();
             }
             else
             {
@@ -57,5 +47,19 @@ public class TrailEffect extends Actor
             }
             timer.mark();
         }
+    }
+    
+    private void removeBlocks()
+    {
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockA.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockB.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockC.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockD.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockE.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockA.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockB.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockC.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockD.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockE.class));
     }
 }
