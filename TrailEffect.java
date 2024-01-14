@@ -23,9 +23,11 @@ public class TrailEffect extends Actor
         this.vertical = vertical;
         ((MyWorld) getWorld()).stop = true;
     }
+
     public void act()
     {
         // Add your action code here.
+        removeBlocks();
         if(timer.millisElapsed() > 25)
         {
             if(image.getWidth() < 1000 && horizontal || image.getHeight() < 1000 && vertical)
@@ -38,7 +40,6 @@ public class TrailEffect extends Actor
                 {
                     image.scale(image.getWidth(), image.getHeight() + 30);
                 }
-                removeBlocks();
             }
             else
             {
@@ -48,18 +49,43 @@ public class TrailEffect extends Actor
             timer.mark();
         }
     }
-    
+
     private void removeBlocks()
     {
-        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockA.class));
-        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockB.class));
-        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockC.class));
-        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockD.class));
-        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2 - 10, image.getHeight() - 5, BlockE.class));
-        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockA.class));
-        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockB.class));
-        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockC.class));
-        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockD.class));
-        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2 - 15, image.getHeight() - 10, BlockE.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2, 0, BlockA.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2, 0, BlockB.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2, 0, BlockC.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2, 0, BlockD.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(image.getWidth()/2, 0, BlockE.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockA.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockB.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockC.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockD.class));
+        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockE.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2, 0, BlockA.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2, 0, BlockB.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2, 0, BlockC.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2, 0, BlockD.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(image.getWidth()/2, 0, BlockE.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockA.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockB.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockC.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockD.class));
+        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-(image.getWidth()/2), 0, BlockE.class));
+        /*
+        boolean k = false;
+        for(int i = 0; i < 601; i++)
+        {
+        for(int u = 0; u < 401; u++)
+        {
+        if(getOneObjectAtOffset(-80, 0, BlockA.class) != null && !k)
+        {
+        System.out.println(u + " " + i);
+        k = true;
+        Greenfoot.stop();
+        }
+        }
+        } 
+         */
     }
 }

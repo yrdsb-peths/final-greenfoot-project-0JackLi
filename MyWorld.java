@@ -20,6 +20,7 @@ public class MyWorld extends World
     Actor[] blocks;
     Actor[][] blockPosition = new Actor[15][10];
     String[][] blockToString = new String[15][10];
+    int[] num = new int[4];
     BlockA blockA;
     BlockB blockB;
     BlockC blockC;
@@ -81,8 +82,8 @@ public class MyWorld extends World
         checkAbility(a, true, false, false);
         checkAbility(a5, false, true, false);
         */
-        checkRow(10, 15, true);
-        checkColumn(10, 15, true);
+        //checkRow(10, 15, true);
+        //checkColumn(10, 15, true);
     }
 
     public void act()
@@ -92,11 +93,13 @@ public class MyWorld extends World
             checkBelow();
             if(!isStillMoving)
             {
-                checkRow(10, 15, true);
-                checkColumn(10, 15, true);
+                checkRow(10, 15, false);
+                checkColumn(10, 15, false);
             }
             if(Greenfoot.mouseClicked(null))
             {
+                //System.out.println(Greenfoot.getMouseInfo().getY());
+                //removeFromArray(animatedHActors.get(0));
                 if(Greenfoot.getMouseInfo().getButton() == 1)
                 {
                     checkClick();
@@ -133,19 +136,23 @@ public class MyWorld extends World
     {
         int x = getWidth()/10 - 18;
         int y = getHeight()/15 - 20;
-        int count = 0;
-        for(int i = 0; i < 15; i++)
+        int count = 1;
+        for(int i = 0; i < 1; i++)
         {
-            count = 0;
-            for(int u = 0; u < 10; u++)
+            //count = 0;
+            for(int u = 0; u < 3; u++)
             {
                 if(blockPosition[i][u] == null)
                 {
                     initilizeActors();
-                    int rand = Greenfoot.getRandomNumber(blocks.length-1);
+                    int rand = 2;//Greenfoot.getRandomNumber(blocks.length-1);
                     blockPosition[i][u] = blocks[rand];
                     //blockToString[i][u] = actorsToString(blockPosition[i][u]);
                     addObject(blocks[rand], x, y); 
+                    if(u == count)
+                    {
+                        checkAbility(blockPosition[i][u], false, true, false);
+                    }
                 }
                 x += 40;
             }
@@ -682,21 +689,25 @@ public class MyWorld extends World
             x1[i] = left.get(i).getX();
             x2[i] = right.get(i).getX();
             //formed another one
-            if(x2[i] - (animatedHActors.get(i).getX() + 15) < 0)
+            if(x2[i] - (animatedHActors.get(i).getX() + 15) < 0 || x1[i] - (animatedHActors.get(i).getX() + 15) > 0)
             {
-                left.get(i).setLocation(animatedHActors.get(i).getX() - 18, animatedHActors.get(i).getY() + 5);
-                right.get(i).setLocation(animatedHActors.get(i).getX() + 15, animatedHActors.get(i).getY() + 5);
+                x1[i] = animatedHActors.get(i).getX() - 18 + num[0];
+                x2[i] = animatedHActors.get(i).getX() + 15 + num[1];
             }
+            left.get(i).setLocation(x1[i], animatedHActors.get(i).getY() + 5);
+            right.get(i).setLocation(x2[i], animatedHActors.get(i).getY() + 5);
         }
         for(int i = 0; i < up.size(); i++)
         {
             y1[i] = up.get(i).getY();
             y2[i] = down.get(i).getY();
-            if(y2[i] - (animatedVActors.get(i).getY() + 17) < 0)
+            if(y2[i] - (animatedVActors.get(i).getY() + 17) < 0 || y1[i] - (animatedVActors.get(i).getY() - 16) > 0)
             {
-                up.get(i).setLocation(animatedVActors.get(i).getX() - 1, animatedVActors.get(i).getY() - 16);
-                down.get(i).setLocation(animatedVActors.get(i).getX() - 1, animatedVActors.get(i).getY() + 17);
+                y1[i] = animatedVActors.get(i).getY() - 16 + num[2];
+                y2[i] = animatedVActors.get(i).getY() + 17 + num[3];
             }
+            up.get(i).setLocation(animatedVActors.get(i).getX() - 1, y1[i]);
+            down.get(i).setLocation(animatedVActors.get(i).getX() - 1, y2[i]);
         }
         if(timer.millisElapsed() > 125)
         {
@@ -704,12 +715,16 @@ public class MyWorld extends World
             {
                 if((animatedHActors.get(i).getX() - 18) - left.get(i).getX() < 4 && canMove)
                 {
+                    num[0] -= 1;
+                    num[1] += 1;
                     left.get(i).setLocation(x1[i] - 1, animatedHActors.get(i).getY() + 5);
                     right.get(i).setLocation(x2[i] + 1, animatedHActors.get(i).getY() + 5);
                 }
                 else if(x2[i] - (animatedHActors.get(i).getX() + 15) != 0)
                 {
-                    canMove = false;                   
+                    canMove = false;
+                    num[0] += 1;
+                    num[1] -= 1;
                     left.get(i).setLocation(x1[i] + 1, animatedHActors.get(i).getY() + 5);
                     right.get(i).setLocation(x2[i] - 1, animatedHActors.get(i).getY() + 5);
                 }
@@ -724,12 +739,16 @@ public class MyWorld extends World
             {
                 if((animatedVActors.get(i).getY() - 16) - up.get(i).getY() < 4 && canMove)
                 {
+                    num[2] -= 1;
+                    num[3] += 1;
                     up.get(i).setLocation(animatedVActors.get(i).getX() - 1, y1[i] - 1);
                     down.get(i).setLocation(animatedVActors.get(i).getX() - 1, y2[i] + 1);
                 }
                 else if(y2[i] - (animatedVActors.get(i).getY() + 17) != 0)
                 {
                     canMove = false;
+                    num[2] += 1;
+                    num[3] -= 1;
                     up.get(i).setLocation(animatedVActors.get(i).getX() - 1, y1[i] + 1);
                     down.get(i).setLocation(animatedVActors.get(i).getX() - 1, y2[i] - 1);
                 }
