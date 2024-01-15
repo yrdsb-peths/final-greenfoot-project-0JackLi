@@ -100,7 +100,7 @@ public class MyWorld extends World
             if(Greenfoot.mouseClicked(null))
             {
                 //System.out.println(Greenfoot.getMouseInfo().getY());
-                //removeFromArray(animatedVActors.get(0));
+                removeFromArray(animatedBActors.get(0));
                 if(Greenfoot.getMouseInfo().getButton() == 1)
                 {
                     checkClick();
@@ -137,8 +137,8 @@ public class MyWorld extends World
     {
         int x = getWidth()/10 - 18;
         int y = getHeight()/15 - 20;
-        int count = 0;
-        for(int i = 0; i < 15; i++)
+        int count = 2, count2 = 5;
+        for(int i = 0; i < 5; i++)
         {
             //count = 0;
             for(int u = 0; u < 10; u++)
@@ -150,6 +150,10 @@ public class MyWorld extends World
                     blockPosition[i][u] = blocks[rand];
                     //blockToString[i][u] = actorsToString(blockPosition[i][u]);
                     addObject(blocks[rand], x, y); 
+                    if(i == count && count2 == u)
+                    {
+                        checkAbility(blockPosition[i][u], false, false, true);
+                    }
                 }
                 x += 40;
             }
@@ -854,8 +858,17 @@ public class MyWorld extends World
                 addObject(effect, actor.getX(), actor.getY());
             }
         }
+        for(int i = 0; i < animatedBActors.size(); i++)
+        {
+            if(animatedBActors.get(i).equals(actor))
+            {
+                Swirl swirl = new Swirl();
+                animatedBActors.remove(actor);
+                addObject(swirl, actor.getX(), actor.getY());
+            }
+        }
     }
-
+    
     private void movingBlockAnimation()
     {
         isStillMoving = false;
