@@ -44,6 +44,7 @@ public class MyWorld extends World
     private ArrayList<ArrowRight> right = new ArrayList<ArrowRight>();
     private ArrayList<Actor> animatedVActors = new ArrayList<Actor>();
     private ArrayList<Actor> animatedHActors = new ArrayList<Actor>();
+    private ArrayList<Actor> animatedBActors = new ArrayList<Actor>();
     private ArrayList<ArrowUp> up = new ArrayList<ArrowUp>();
     private ArrayList<ArrowDown> down = new ArrayList<ArrowDown>();
 
@@ -82,8 +83,8 @@ public class MyWorld extends World
         checkAbility(a, true, false, false);
         checkAbility(a5, false, true, false);
         */
-        //checkRow(10, 15, true);
-        //checkColumn(10, 15, true);
+        checkRow(10, 15, true);
+        checkColumn(10, 15, true);
     }
 
     public void act()
@@ -93,13 +94,13 @@ public class MyWorld extends World
             checkBelow();
             if(!isStillMoving)
             {
-                checkRow(10, 15, false);
-                checkColumn(10, 15, false);
+                checkRow(10, 15, true);
+                checkColumn(10, 15, true);
             }
             if(Greenfoot.mouseClicked(null))
             {
                 //System.out.println(Greenfoot.getMouseInfo().getY());
-                //removeFromArray(animatedHActors.get(0));
+                //removeFromArray(animatedVActors.get(0));
                 if(Greenfoot.getMouseInfo().getButton() == 1)
                 {
                     checkClick();
@@ -136,23 +137,19 @@ public class MyWorld extends World
     {
         int x = getWidth()/10 - 18;
         int y = getHeight()/15 - 20;
-        int count = 1;
-        for(int i = 0; i < 1; i++)
+        int count = 0;
+        for(int i = 0; i < 15; i++)
         {
             //count = 0;
-            for(int u = 0; u < 3; u++)
+            for(int u = 0; u < 10; u++)
             {
                 if(blockPosition[i][u] == null)
                 {
                     initilizeActors();
-                    int rand = 2;//Greenfoot.getRandomNumber(blocks.length-1);
+                    int rand = Greenfoot.getRandomNumber(blocks.length-1);
                     blockPosition[i][u] = blocks[rand];
                     //blockToString[i][u] = actorsToString(blockPosition[i][u]);
                     addObject(blocks[rand], x, y); 
-                    if(u == count)
-                    {
-                        checkAbility(blockPosition[i][u], false, true, false);
-                    }
                 }
                 x += 40;
             }
@@ -671,6 +668,10 @@ public class MyWorld extends World
             addObject(upArrow, actor.getX() - 1, actor.getY() - 16);
             addObject(downArrow, actor.getX() - 1, actor.getY() + 17);
             animatedVActors.add(obj);
+        }
+        else if(bomb)
+        {
+            animatedBActors.add(obj);
         }
         startAnimation = true;
         addObject(obj, actor.getX(), actor.getY());
