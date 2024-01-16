@@ -13,29 +13,28 @@ public class Swirl extends Actor
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     GreenfootImage image = getImage();
-    Class cls;
+    Class<?> cls;
     SimpleTimer timer = new SimpleTimer();
     public Swirl()
     {
-        
+        image.scale(30, 30);
     }
     
     public void act()
     {
         // Add your action code here.
-        if(timer.millisElapsed() > 125)
-        {
-            
-        }
+        removeOctagonShape();
+        ((MyWorld) getWorld()).removeObject(this);
     }
     
     private void removeOctagonShape()
     {
+        
         for(int i = 0; i < 3; i++)
         {
             for(int u = 0; u < 3; u++)
             {
-                for(int k = 0; k < 5; i++)
+                for(int k = 0; k < 5; k++)
                 {
                     if(k == 0)
                     {
@@ -59,17 +58,25 @@ public class Swirl extends Actor
                     }
                     if(i < 2)
                     {
+                        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(40 * u , 40 * i, cls));
+                        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(-(40 * u), 40 * i, cls));
+                        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(-(40 * u) , -(40 * i), cls));
+                        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(40 * u, -(40 * i), cls));
                         ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(40 * u , 40 * i, cls));
                         ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-(40 * u), 40 * i, cls));
                         ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-(40 * u) , -(40 * i), cls));
                         ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(40 * u, -(40 * i), cls));
                     }
-                    else
+                    else if(u >= 1)
                     {
-                        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(40, 40 * i, cls));
-                        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-40, -(40 * i), cls));
-                        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-40, 40 * i, cls));
-                        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(40, -(40 * i), cls));
+                        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(40 * (u - 1), 40 * i, cls));
+                        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(-40 * (u - 1), -(40 * i), cls));
+                        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(-40 * (u - 1), 40 * i, cls));
+                        ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(40 * (u - 1), -(40 * i), cls));
+                        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(40 * (u - 1), 40 * i, cls));
+                        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-40 * (u - 1), -(40 * i), cls));
+                        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(-40 * (u - 1), 40 * i, cls));
+                        ((MyWorld) getWorld()).removeObject(getOneObjectAtOffset(40 * (u - 1), -(40 * i), cls));
                     }
                 }
             }

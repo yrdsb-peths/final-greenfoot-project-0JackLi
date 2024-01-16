@@ -100,7 +100,7 @@ public class MyWorld extends World
             if(Greenfoot.mouseClicked(null))
             {
                 //System.out.println(Greenfoot.getMouseInfo().getY());
-                removeFromArray(animatedBActors.get(0));
+                //removeFromArray(animatedBActors.get(0));
                 if(Greenfoot.getMouseInfo().getButton() == 1)
                 {
                     checkClick();
@@ -137,8 +137,8 @@ public class MyWorld extends World
     {
         int x = getWidth()/10 - 18;
         int y = getHeight()/15 - 20;
-        int count = 2, count2 = 5;
-        for(int i = 0; i < 5; i++)
+        //int count = 2, count2 = 9;
+        for(int i = 0; i < 15; i++)
         {
             //count = 0;
             for(int u = 0; u < 10; u++)
@@ -150,10 +150,12 @@ public class MyWorld extends World
                     blockPosition[i][u] = blocks[rand];
                     //blockToString[i][u] = actorsToString(blockPosition[i][u]);
                     addObject(blocks[rand], x, y); 
+                    /*
                     if(i == count && count2 == u)
                     {
                         checkAbility(blockPosition[i][u], false, false, true);
                     }
+                    */
                 }
                 x += 40;
             }
@@ -214,6 +216,11 @@ public class MyWorld extends World
             }
             removeObject(frame);
             clickCount = 0;
+            if(checkSpecial(clickedActors))
+            {
+                removeBlock(clickedActors[0]);
+                removeBlock(clickedActors[1]);
+            }
         }
         else
         {
@@ -251,12 +258,53 @@ public class MyWorld extends World
             switchElements(actor); 
             checkRow(10, 15, false);
             checkColumn(10, 15, false);
+            if(checkSpecial(actor))
+            {
+                return true;
+            }
             if(!canSwitch)
             {
                 switchElements(actor);
                 return false;
             }
             return true;
+        }
+        return false;
+    }
+    
+    private boolean checkSpecial(Actor[] actor)
+    {
+        boolean canContinue = false;
+        for(int i = 0; i < animatedHActors.size(); i++)
+        {
+            if(actor[0].equals(animatedHActors.get(i)) || actor[1].equals(animatedHActors.get(i)))
+            {
+                canContinue = true;
+            }
+        }
+        for(int i = 0; i < animatedVActors.size(); i++)
+        {
+            if(actor[0].equals(animatedVActors.get(i)) || actor[1].equals(animatedVActors.get(i)))
+            {
+                if(canContinue)
+                {
+                    return true;
+                }
+                else
+                {
+                    canContinue = true;
+                }
+            }
+        }
+        for(int i = 0; i < animatedBActors.size(); i++)
+        {
+            if(actor[0].equals(animatedBActors.get(i)) || actor[1].equals(animatedBActors.get(i)))
+            {
+                if(canContinue)
+                {
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -809,6 +857,26 @@ public class MyWorld extends World
         }
     }
 
+    public void removeFromArray(Actor[] actor, boolean vertical, boolean horizontal, boolean bomb)
+    {
+        for(int i = 0; i < blockPosition.length; i++)
+        {
+            for(int u = 0; u < blockPosition[i].length; u++)
+            {
+                if(blockPosition[i][u] != null && blockPosition[i][u].equals(actor[0]) 
+                || blockPosition[i][u] != null && blockPosition[i][u].equals(actor[1]))
+                {
+                    blockPosition[i][u] = null;
+                    blockToString[i][u] = null;
+                    //y = i;
+                }
+            }
+        }
+        if(vertical && bomb || horizontal && bomb)
+        {
+            
+        }
+    }
     public void removeFromArray(Actor actor)
     {
         int y = 0;
