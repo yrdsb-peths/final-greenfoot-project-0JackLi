@@ -56,33 +56,29 @@ public class MyWorld extends World
         initilizeActors();
         createBackground();
         addLine();
-        randomBlocks();
+        //randomBlocks();
         stop = false;
-        /*
         BlockA a = new BlockA();
         BlockA a2 = new BlockA();
         BlockA a3 = new BlockA();
-        BlockA a4 = new BlockA();
-        BlockA a5 = new BlockA();
         BlockB b = new BlockB();
         BlockB b2 = new BlockB();
-        blockPosition[2][0] = a;
-        blockPosition[2][1] = a2;
-        //blockPosition[2][1] = b;
-        blockPosition[2][2] = a3;
-        blockPosition[3][0] = a4;
-        blockPosition[2][4] = a5;
-        //blockPosition[2][3] = b2;
-        addObject(a, 22, 100);
-        addObject(a2, 62, 100);
-        //addObject(b, 62, 100);
-        addObject(a3, 102, 100);
-        addObject(a4, 22, 140);
-        addObject(a5, 182, 100);
-        //addObject(b2, 142, 100);
-        checkAbility(a, true, false, false);
-        checkAbility(a5, false, true, false);
-         */
+        BlockB b3 = new BlockB();
+        
+        blockPosition[0][1] = a;
+        blockPosition[0][3] = a2;
+        blockPosition[1][2] = a3;
+        blockPosition[3][1] = b;
+        blockPosition[4][1] = b2;
+        blockPosition[6][1] = b3;
+        
+ 
+        addObject(a, 60, 20);
+        addObject(a2, 140, 20);
+        addObject(a3, 100, 60);
+        addObject(b, 100, 140);
+        addObject(b2, 100, 180);
+        addObject(b3, 100, 260);
         checkRow(10, 15, true);
         checkColumn(10, 15, true);
     }
