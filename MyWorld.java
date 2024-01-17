@@ -83,24 +83,24 @@ public class MyWorld extends World
         checkAbility(a, true, false, false);
         checkAbility(a5, false, true, false);
          */
-        //checkRow(10, 15, true);
-        //checkColumn(10, 15, true);
+        checkRow(10, 15, true);
+        checkColumn(10, 15, true);
     }
 
     public void act()
     {
+        checkBelow();
         if(!stop)
         {
-            checkBelow();
             if(!isStillMoving)
             {
-                //checkRow(10, 15, true);
-                //checkColumn(10, 15, true);
+                checkRow(10, 15, true);
+                checkColumn(10, 15, true);
             }
             if(Greenfoot.mouseClicked(null))
             {
                 //System.out.println(Greenfoot.getMouseInfo().getY());
-                //removeFromArray(animatedBActors.get(0));
+                //removeFromArray(animatedHActors.get(0));
                 if(Greenfoot.getMouseInfo().getButton() == 1)
                 {
                     checkClick();
@@ -148,9 +148,9 @@ public class MyWorld extends World
                     initilizeActors();
                     int rand = Greenfoot.getRandomNumber(blocks.length-1);
                     blockPosition[i][u] = blocks[rand];
+                    addObject(blocks[rand], x, y);
                     //blockToString[i][u] = actorsToString(blockPosition[i][u]);
-                    addObject(blocks[rand], x, y); 
-                    
+                    /*
                     if(i == count && count2 == u)
                     {
                         checkAbility(blockPosition[i][u], true, false, true);
@@ -159,6 +159,7 @@ public class MyWorld extends World
                     {
                         checkAbility(blockPosition[i][u], true, false, false);
                     }
+                    */
                 }
                 x += 40;
             }
@@ -215,16 +216,16 @@ public class MyWorld extends World
                 if(canMove(clickedActors))
                 {
                     moveBlocks(clickedActors);
+                    if(checkSpecial(clickedActors))
+                    {
+                        removeFromArray(clickedActors);
+                        removeObject(clickedActors[0]);
+                        removeObject(clickedActors[1]);
+                    }
                 }
             }
             removeObject(frame);
             clickCount = 0;
-            if(checkSpecial(clickedActors))
-            {
-                removeFromArray(clickedActors);
-                removeObject(clickedActors[0]);
-                removeObject(clickedActors[1]);
-            }
         }
         else
         {
@@ -557,6 +558,17 @@ public class MyWorld extends World
                 }
             }
         }
+        
+        for(int i = 0; i < animatedHActors.size(); i++)
+        {
+            for(int u = 0; u < list.size(); u++)
+            {
+                if(list.get(i).equals(animatedHActors.get(i)))
+                {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -860,6 +872,7 @@ public class MyWorld extends World
     public void removeFromArray(Actor[] actor)
     {
         TrailEffect trail, trail2;
+        Swirl swirl;
         boolean horizontal = false, vertical = false, bomb = false;
         for(int i = 0; i < blockPosition.length; i++)
         {
@@ -922,6 +935,16 @@ public class MyWorld extends World
             {
                 bomb = true;
             }
+             if(animatedBActors.get(i).equals(actor[0]))
+            {
+                 animatedBActors.remove(actor[0]);
+                 i--;
+            }
+            else if(animatedBActors.get(i).equals(actor[1]))
+            {
+                animatedBActors.remove(actor[1]);
+                i--;
+            }
         }
         if(vertical && bomb || horizontal && bomb)
         {
@@ -940,6 +963,11 @@ public class MyWorld extends World
             addObject(trail, actor[0].getX(), actor[0].getY());
             addObject(trail2, actor[0].getX(), actor[0].getY());
         }
+        else if(bomb)
+        {
+            swirl = new Swirl(6, 6);
+            addObject(swirl, actor[0].getX(), actor[0].getY());
+        }
     }
 
     public void removeFromArray(Actor actor)
@@ -954,6 +982,8 @@ public class MyWorld extends World
                     blockPosition[i][u] = null;
                     blockToString[i][u] = null;
                     //y = i;
+                    Phase phase = new Phase();
+                    addObject(phase, actor.getX(), actor.getY());
                 }
             }
         }
@@ -995,7 +1025,7 @@ public class MyWorld extends World
         {
             if(animatedBActors.get(i).equals(actor))
             {
-                Swirl swirl = new Swirl();
+                Swirl swirl = new Swirl(3, 3);
                 animatedBActors.remove(actor);
                 addObject(swirl, actor.getX(), actor.getY());
             }
@@ -1004,7 +1034,8 @@ public class MyWorld extends World
 
     private void movingBlockAnimation()
     {
-        isStillMoving = false;
+        int count = 0;
+        //isStillMoving = false;
         for(int i = 0; i < blockPosition.length; i++)
         {
             for(int u = 0; u < blockPosition[i].length; u++)
@@ -1012,11 +1043,21 @@ public class MyWorld extends World
                 if(blockPosition[i][u] != null && blockPosition[i][u].getY() < 20 + 40 * i)
                 {
                     blockPosition[i][u].setLocation(blockPosition[i][u].getX(), blockPosition[i][u].getY() + 20);
-                    isStillMoving = true;
+                    //isStillMoving = true;
+                    count++;
                 }
             }
         }
+        if(count > 0)
+        {
+            isStillMoving = true;
+        }
+        else
+        {
+            isStillMoving = false;
+        }
     }
+    
 
     private void createBackground()
     {

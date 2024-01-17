@@ -15,9 +15,12 @@ public class Swirl extends Actor
     GreenfootImage image = getImage();
     Class<?> cls;
     SimpleTimer timer = new SimpleTimer();
-    public Swirl()
+    int horizontal = 0, vertical = 0;
+    public Swirl(int horizontal, int vertical)
     {
         image.scale(30, 30);
+        this.horizontal = horizontal;
+        this.vertical = vertical;
     }
     
     public void act()
@@ -29,10 +32,9 @@ public class Swirl extends Actor
     
     private void removeOctagonShape()
     {
-        
-        for(int i = 0; i < 3; i++)
+        for(int i = 0; i < vertical; i++)
         {
-            for(int u = 0; u < 3; u++)
+            for(int u = 0; u < horizontal; u++)
             {
                 for(int k = 0; k < 5; k++)
                 {
