@@ -22,6 +22,7 @@ public class MyWorld extends World
     String[][] blockToString = new String[15][10];
     int[] num = new int[4];
     Star star;
+    Label label;
     BlockA blockA;
     BlockB blockB;
     BlockC blockC;
@@ -35,6 +36,7 @@ public class MyWorld extends World
     //int count = -1;
     ArrayList<Star> starList = new ArrayList<Star>();
     ArrayList<Actor> removeList = new ArrayList<Actor>();
+    public int score = 0;
     boolean isStillMoving = true;
     public static boolean stop = false;
     private int clickCount = 0;
@@ -50,11 +52,12 @@ public class MyWorld extends World
     private ArrayList<Actor> animatedBActors = new ArrayList<Actor>();
     private ArrayList<ArrowUp> up = new ArrayList<ArrowUp>();
     private ArrayList<ArrowDown> down = new ArrayList<ArrowDown>();
-    int current = 0;
     public MyWorld()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(400, 600, 1);
+        label = new Label(score, 30);
+        addObject(label, 50, 100);
         initilizeImages();
         initilizeActors();
         createBackground();
@@ -67,6 +70,7 @@ public class MyWorld extends World
 
     public void act()
     {
+        setScore();
         if(!stop)
         {
             if(!isStillMoving)
@@ -103,6 +107,11 @@ public class MyWorld extends World
             abilityAnimation();
         }
     }
+    
+    private void setScore()
+    {
+        label.setValue(score);
+    }
 
     private void animatedStar(ArrayList<Star> list, int start, int end, int x, int y)
     {
@@ -111,60 +120,30 @@ public class MyWorld extends World
         {
             if(i == start)
             {
-                x -= 20;
+                x += 20;
             }
             else if(i == start + 1)
             {
-                x -= 10;
-                y += 20;
-                image = list.get(i).getImage();
-                image.setTransparency(0);
+                x -= 5;
+                y += 20;               
             }
             else if(i == start + 2)
             {
-                x -= 20;
+                x -= 25;
             }
             else if(i == start + 3)
             {
-                x -= 10;
-                y -= 20;
-                image = list.get(i).getImage();
-                image.setTransparency(0);
+               x -= 10;
+               y -= 20;
             }
             else
             {
                 x += 20;
                 y -= 20;
             }
-            addObject(list.get(i), x + 20, y);
-            list.get(i).setLocation(x + 20, y);
+            addObject(list.get(i), x, y);
+            list.get(i).setLocation(x, y);
         }
-        /*
-        for(int i = list.size() - 1; i > 0; i--)
-        {
-            if(i == 1)
-            {
-                addObject(list.get(i - 1), list.get(i).getX() + 20, list.get(i).getY() - 20);
-                list.get(i - 1).setLocation(
-            }
-            else if(i == 2)
-            {
-                addObject(list.get(i - 1), list.get(i ).getX() - 10, list.get(i).getY() - 20);
-                image = list.get(i - 1).getImage();
-                image.setTransparency(0);
-            }
-            else if(i == 3)
-            {
-                addObject(list.get(i - 1), list.get(i).getX() - 20, list.get(i).getY());
-            }
-            else if(i == 4)
-            {
-                addObject(list.get(i - 1), list.get(i).getX() - 10, list.get(i).getY() + 20);
-                image = list.get(i - 1).getImage();
-                image.setTransparency(0);
-            }
-        }
-        */
     }
 
     private void initilizeActors()
@@ -470,7 +449,6 @@ public class MyWorld extends World
                 {
                     if(count >= 4 && delete && checkAbilityActors(removeList, true, false))
                     {
-                        System.out.println(removeList.size());
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[0]);
@@ -800,12 +778,12 @@ public class MyWorld extends World
             backEffect.add(swirl);
             for(int i = 0; i < 5; i++)
             {
-                star = new Star();
+                star = new Star(i);
                 starList.add(star);
                 currentList.add(star);
             }
             addObject(swirl, actor.getX(), actor.getY());
-            addObject(star, actor.getX() + 20, actor.getY());
+            animatedStar(starList, starList.size() - 5, starList.size(), actor.getX(), actor.getY());
         }
         startAnimation = true;
         addObject(obj, actor.getX(), actor.getY());
@@ -959,7 +937,7 @@ public class MyWorld extends World
                 {
                     blockPosition[i][u] = null;
                     blockToString[i][u] = null;
-                    //y = i;
+                    score += 10;
                 }
             }
         }
@@ -1029,29 +1007,6 @@ public class MyWorld extends World
                 i--;
             }
         }
-        /*
-        for(int i = 0; i < animatedBActors.size(); i++)
-        {
-        if(animatedBActors.get(i).equals(actor[0]) || animatedBActors.get(i).equals(actor[1]))
-        {
-        for(int u = 0; u < 5; u++)
-        {
-        removeObject(starList.get(i * 5));
-        starList.remove(i * 5);
-        }
-        }
-        if(animatedBActors.get(i).equals(actor[0]))
-        {
-        animatedBActors.remove(actor[0]);
-        i--;
-        }
-        else if(animatedBActors.get(i).equals(actor[1]))
-        {
-        animatedBActors.remove(actor[1]);
-        i--;
-        }
-        }
-         */
         if(vertical && bomb || horizontal && bomb)
         {
             for(int i = 0; i < 3; i++)
@@ -1088,6 +1043,7 @@ public class MyWorld extends World
                     blockToString[i][u] = null;
                     Phase phase = new Phase();
                     addObject(phase, actor.getX(), actor.getY());
+                    score += 10;
                 }
             }
         }
@@ -1102,15 +1058,6 @@ public class MyWorld extends World
                 left.remove(i);
                 right.remove(i);
                 addObject(effect, actor.getX(), actor.getY());
-                /*
-                for(int u = 0; u < blockPosition[y].length; u++)
-                {
-                if(blockPosition[y][u] != null)
-                {
-                removeFromArray(blockPosition[y][u]);
-                }
-                }
-                 */
             }
         }
         for(int i = 0; i < animatedVActors.size(); i++){

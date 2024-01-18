@@ -15,10 +15,14 @@ public class Star extends Actor
     GreenfootImage image = getImage();
     SimpleTimer timer;
     boolean canStart = false;
-    public Star()
+    public Star(int i)
     {
         timer = new SimpleTimer();
         image.scale(10, 10);
+        if(i % 2 != 0)
+        {
+            image.setTransparency(0);
+        }
     }
     public void act()
     {
