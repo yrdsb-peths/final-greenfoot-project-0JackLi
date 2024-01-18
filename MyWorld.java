@@ -21,6 +21,7 @@ public class MyWorld extends World
     Actor[][] blockPosition = new Actor[15][10];
     String[][] blockToString = new String[15][10];
     int[] num = new int[4];
+    Star star;
     BlockA blockA;
     BlockB blockB;
     BlockC blockC;
@@ -32,14 +33,16 @@ public class MyWorld extends World
     Line2 line2;
     Frame frame = new Frame();
     //int count = -1;
+    ArrayList<Star> starList = new ArrayList<Star>();
     ArrayList<Actor> removeList = new ArrayList<Actor>();
     boolean isStillMoving = true;
     public static boolean stop = false;
     private int clickCount = 0;
     private boolean canSwitch = false;
-    boolean isTrue, canMove = true, startAnimation;
+    boolean isTrue, canMove = true, startAnimation, canContinue = false;
     private SimpleTimer timer = new SimpleTimer();
     private SimpleTimer movingTimer = new SimpleTimer();
+    private ArrayList<BackEffect> backEffect = new ArrayList<BackEffect>();
     private ArrayList<ArrowLeft> left = new ArrayList<ArrowLeft>();
     private ArrayList<ArrowRight> right = new ArrayList<ArrowRight>();
     private ArrayList<Actor> animatedVActors = new ArrayList<Actor>();
@@ -47,7 +50,7 @@ public class MyWorld extends World
     private ArrayList<Actor> animatedBActors = new ArrayList<Actor>();
     private ArrayList<ArrowUp> up = new ArrayList<ArrowUp>();
     private ArrayList<ArrowDown> down = new ArrayList<ArrowDown>();
-
+    int current = 0;
     public MyWorld()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
@@ -56,47 +59,30 @@ public class MyWorld extends World
         initilizeActors();
         createBackground();
         addLine();
-        //randomBlocks();
+        randomBlocks();
         stop = false;
-        BlockA a = new BlockA();
-        BlockA a2 = new BlockA();
-        BlockA a3 = new BlockA();
-        BlockB b = new BlockB();
-        BlockB b2 = new BlockB();
-        BlockB b3 = new BlockB();
-        
-        blockPosition[0][1] = a;
-        blockPosition[0][3] = a2;
-        blockPosition[1][2] = a3;
-        blockPosition[3][1] = b;
-        blockPosition[4][1] = b2;
-        blockPosition[6][1] = b3;
-        
- 
-        addObject(a, 60, 20);
-        addObject(a2, 140, 20);
-        addObject(a3, 100, 60);
-        addObject(b, 100, 140);
-        addObject(b2, 100, 180);
-        addObject(b3, 100, 260);
         checkRow(10, 15, true);
         checkColumn(10, 15, true);
     }
 
     public void act()
     {
-        checkBelow();
         if(!stop)
         {
             if(!isStillMoving)
             {
                 checkRow(10, 15, true);
                 checkColumn(10, 15, true);
+                //checkBelow();
+            }
+            if(!stop)
+            {
+                checkBelow();
             }
             if(Greenfoot.mouseClicked(null))
             {
                 //System.out.println(Greenfoot.getMouseInfo().getY());
-                //removeFromArray(animatedHActors.get(0));
+                //removeFromArray(animatedBActors.get(0));
                 if(Greenfoot.getMouseInfo().getButton() == 1)
                 {
                     checkClick();
@@ -116,6 +102,45 @@ public class MyWorld extends World
         {
             abilityAnimation();
         }
+    }
+
+    private void animatedStar(ArrayList<Star> list, int start, int end, int x, int y)
+    {
+        GreenfootImage image;
+        for(int i = start; i < end; i++)
+        {
+            if(i == start)
+            {
+                addObject(list.get(i - 1), x + 20, y - 20);
+                list.get(i - 1).setLocation(x, y);
+            }
+        }
+        /*
+        for(int i = list.size() - 1; i > 0; i--)
+        {
+            if(i == 1)
+            {
+                addObject(list.get(i - 1), list.get(i).getX() + 20, list.get(i).getY() - 20);
+                list.get(i - 1).setLocation(
+            }
+            else if(i == 2)
+            {
+                addObject(list.get(i - 1), list.get(i ).getX() - 10, list.get(i).getY() - 20);
+                image = list.get(i - 1).getImage();
+                image.setTransparency(0);
+            }
+            else if(i == 3)
+            {
+                addObject(list.get(i - 1), list.get(i).getX() - 20, list.get(i).getY());
+            }
+            else if(i == 4)
+            {
+                addObject(list.get(i - 1), list.get(i).getX() - 10, list.get(i).getY() + 20);
+                image = list.get(i - 1).getImage();
+                image.setTransparency(0);
+            }
+        }
+        */
     }
 
     private void initilizeActors()
@@ -145,22 +170,26 @@ public class MyWorld extends World
                     int rand = Greenfoot.getRandomNumber(blocks.length-1);
                     blockPosition[i][u] = blocks[rand];
                     addObject(blocks[rand], x, y);
-                    //blockToString[i][u] = actorsToString(blockPosition[i][u]);
-                    /*
-                    if(i == count && count2 == u)
-                    {
-                        checkAbility(blockPosition[i][u], true, false, true);
-                    }
-                    if(i == count && count2 + 1 == u)
-                    {
-                        checkAbility(blockPosition[i][u], true, false, false);
-                    }
-                    */
                 }
                 x += 40;
             }
             x = getWidth()/10 - 18;
             y += getHeight()/15;
+        }
+    }
+
+    private void generateBlocks()
+    {
+
+        for(int u = 0; u < 10; u++)
+        {
+            if(blockPosition[0][u] == null)
+            {
+                initilizeActors();
+                int rand = Greenfoot.getRandomNumber(blocks.length-1);
+                blockPosition[0][u] = blocks[rand];
+                addObject(blocks[rand], 20 + 40 * u, 0);
+            }
         }
     }
 
@@ -294,7 +323,7 @@ public class MyWorld extends World
         {
             if(actor[0].equals(animatedBActors.get(i)) || actor[1].equals(animatedBActors.get(i)))
             {
-               count++;
+                count++;
             }
         }
         if(count >= 2)
@@ -415,8 +444,9 @@ public class MyWorld extends World
                 }
                 else 
                 {
-                    if(count >= 4 && delete && checkAbilityActors(removeList))
+                    if(count >= 4 && delete && checkAbilityActors(removeList, true, false))
                     {
+                        System.out.println(removeList.size());
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[0]);
@@ -486,7 +516,7 @@ public class MyWorld extends World
                 }
                 else 
                 {
-                    if(count >= 4 && delete && checkAbilityActors(removeList))
+                    if(count >= 4 && delete && checkAbilityActors(removeList, false, true))
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
@@ -531,14 +561,19 @@ public class MyWorld extends World
         }
     }
 
-    private boolean checkAbilityActors(ArrayList<Actor> list)
+    private boolean checkAbilityActors(ArrayList<Actor> list, boolean horizontal, boolean vertical)
     {
         for(int i = 0; i < animatedHActors.size(); i++)
         {
             for(int u = 0; u < list.size(); u++)
             {
-                if(list.get(i).equals(animatedHActors.get(i)))
+                if(list.get(u).equals(animatedHActors.get(i)))
                 {
+                    if(vertical && clickedActors[0]!= null)
+                    {
+                        TrailEffect effect = new TrailEffect(false, true);
+                        addObject(effect, clickedActors[0].getX(), clickedActors[0].getY());
+                    }
                     return false;
                 }
             }
@@ -548,18 +583,23 @@ public class MyWorld extends World
         {
             for(int u = 0; u < list.size(); u++)
             {
-                if(list.get(i).equals(animatedVActors.get(i)))
+                if(list.get(u).equals(animatedVActors.get(i)))
                 {
+                    if(horizontal && clickedActors[0]!= null)
+                    {
+                        TrailEffect effect = new TrailEffect(true, false);
+                        addObject(effect, clickedActors[0].getX(), clickedActors[0].getY());
+                    }
                     return false;
                 }
             }
         }
-        
+
         for(int i = 0; i < animatedHActors.size(); i++)
         {
             for(int u = 0; u < list.size(); u++)
             {
-                if(list.get(i).equals(animatedHActors.get(i)))
+                if(list.get(u).equals(animatedHActors.get(i)))
                 {
                     return false;
                 }
@@ -668,6 +708,7 @@ public class MyWorld extends World
         ArrowRight rightArrow;
         ArrowUp upArrow;
         ArrowDown downArrow;
+        ArrayList<Star> currentList = new ArrayList<Star>();
         if(actor.getClass().equals(BlockA.class))
         {           
             BlockA a = new BlockA();
@@ -731,6 +772,17 @@ public class MyWorld extends World
         else if(bomb)
         {
             animatedBActors.add(obj);
+            BackEffect swirl = new BackEffect();
+            backEffect.add(swirl);
+            for(int i = 0; i < 5; i++)
+            {
+                star = new Star();
+                starList.add(star);
+                currentList.add(star);
+            }
+            addObject(swirl, actor.getX(), actor.getY());
+            addObject(star, actor.getX() + 20, actor.getY());
+            animatedStar(currentList);
         }
         startAnimation = true;
         addObject(obj, actor.getX(), actor.getY());
@@ -768,6 +820,11 @@ public class MyWorld extends World
             }
             up.get(i).setLocation(animatedVActors.get(i).getX() - 1, y1[i]);
             down.get(i).setLocation(animatedVActors.get(i).getX() - 1, y2[i]);
+        }
+        for(int i = 0; i < backEffect.size(); i++)
+        {
+            backEffect.get(i).setLocation(animatedBActors.get(i).getX(), animatedBActors.get(i).getY());
+            
         }
         if(timer.millisElapsed() > 125)
         {
@@ -895,8 +952,8 @@ public class MyWorld extends World
             }
             if(animatedHActors.get(i).equals(actor[0]))
             {
-                 animatedHActors.remove(actor[0]);
-                 i--;
+                animatedHActors.remove(actor[0]);
+                i--;
             }
             else if(animatedHActors.get(i).equals(actor[1]))
             {
@@ -916,8 +973,8 @@ public class MyWorld extends World
             }
             if(animatedVActors.get(i).equals(actor[0]))
             {
-                 animatedVActors.remove(actor[0]);
-                 i--;
+                animatedVActors.remove(actor[0]);
+                i--;
             }
             else if(animatedVActors.get(i).equals(actor[1]))
             {
@@ -930,11 +987,18 @@ public class MyWorld extends World
             if(animatedBActors.get(i).equals(actor[0]) || animatedBActors.get(i).equals(actor[1]))
             {
                 bomb = true;
+                removeObject(backEffect.get(i));
+                backEffect.remove(i);
+                for(int u = 0; u < 5; u++)
+                {
+                    removeObject(starList.get(i * 5));
+                    starList.remove(i * 5);
+                }
             }
-             if(animatedBActors.get(i).equals(actor[0]))
+            if(animatedBActors.get(i).equals(actor[0]))
             {
-                 animatedBActors.remove(actor[0]);
-                 i--;
+                animatedBActors.remove(actor[0]);
+                i--;
             }
             else if(animatedBActors.get(i).equals(actor[1]))
             {
@@ -942,6 +1006,29 @@ public class MyWorld extends World
                 i--;
             }
         }
+        /*
+        for(int i = 0; i < animatedBActors.size(); i++)
+        {
+        if(animatedBActors.get(i).equals(actor[0]) || animatedBActors.get(i).equals(actor[1]))
+        {
+        for(int u = 0; u < 5; u++)
+        {
+        removeObject(starList.get(i * 5));
+        starList.remove(i * 5);
+        }
+        }
+        if(animatedBActors.get(i).equals(actor[0]))
+        {
+        animatedBActors.remove(actor[0]);
+        i--;
+        }
+        else if(animatedBActors.get(i).equals(actor[1]))
+        {
+        animatedBActors.remove(actor[1]);
+        i--;
+        }
+        }
+         */
         if(vertical && bomb || horizontal && bomb)
         {
             for(int i = 0; i < 3; i++)
@@ -968,7 +1055,6 @@ public class MyWorld extends World
 
     public void removeFromArray(Actor actor)
     {
-        int y = 0;
         for(int i = 0; i < blockPosition.length; i++)
         {
             for(int u = 0; u < blockPosition[i].length; u++)
@@ -977,7 +1063,6 @@ public class MyWorld extends World
                 {
                     blockPosition[i][u] = null;
                     blockToString[i][u] = null;
-                    //y = i;
                     Phase phase = new Phase();
                     addObject(phase, actor.getX(), actor.getY());
                 }
@@ -1023,15 +1108,28 @@ public class MyWorld extends World
             {
                 Swirl swirl = new Swirl(3, 3);
                 animatedBActors.remove(actor);
+                removeObject(backEffect.get(i));
+                backEffect.remove(i);
                 addObject(swirl, actor.getX(), actor.getY());
             }
         }
+        for(int i = 0; i < animatedBActors.size(); i++)
+        {
+            if(animatedBActors.get(i).equals(actor))
+            {
+                for(int u = 0; u < 5; u++)
+                {
+                    removeObject(starList.get(i * 5));
+                    starList.remove(i * 5);
+                }
+            }
+            animatedBActors.remove(actor);
+        }
     }
-
+    int c = 0;
     private void movingBlockAnimation()
     {
-        int count = 0;
-        //isStillMoving = false;
+        isStillMoving = false;
         for(int i = 0; i < blockPosition.length; i++)
         {
             for(int u = 0; u < blockPosition[i].length; u++)
@@ -1039,21 +1137,17 @@ public class MyWorld extends World
                 if(blockPosition[i][u] != null && blockPosition[i][u].getY() < 20 + 40 * i)
                 {
                     blockPosition[i][u].setLocation(blockPosition[i][u].getX(), blockPosition[i][u].getY() + 20);
-                    //isStillMoving = true;
-                    count++;
+                    isStillMoving = true;
                 }
             }
         }
-        if(count > 0)
+        c++;
+        if(c >= 2)
         {
-            isStillMoving = true;
-        }
-        else
-        {
-            isStillMoving = false;
+            generateBlocks();
+            c = 0;
         }
     }
-    
 
     private void createBackground()
     {
