@@ -111,9 +111,33 @@ public class MyWorld extends World
         {
             if(i == start)
             {
-                addObject(list.get(i - 1), x + 20, y - 20);
-                list.get(i - 1).setLocation(x, y);
+                x -= 20;
             }
+            else if(i == start + 1)
+            {
+                x -= 10;
+                y += 20;
+                image = list.get(i).getImage();
+                image.setTransparency(0);
+            }
+            else if(i == start + 2)
+            {
+                x -= 20;
+            }
+            else if(i == start + 3)
+            {
+                x -= 10;
+                y -= 20;
+                image = list.get(i).getImage();
+                image.setTransparency(0);
+            }
+            else
+            {
+                x += 20;
+                y -= 20;
+            }
+            addObject(list.get(i), x + 20, y);
+            list.get(i).setLocation(x + 20, y);
         }
         /*
         for(int i = list.size() - 1; i > 0; i--)
@@ -782,7 +806,6 @@ public class MyWorld extends World
             }
             addObject(swirl, actor.getX(), actor.getY());
             addObject(star, actor.getX() + 20, actor.getY());
-            animatedStar(currentList);
         }
         startAnimation = true;
         addObject(obj, actor.getX(), actor.getY());
@@ -824,7 +847,7 @@ public class MyWorld extends World
         for(int i = 0; i < backEffect.size(); i++)
         {
             backEffect.get(i).setLocation(animatedBActors.get(i).getX(), animatedBActors.get(i).getY());
-            
+            animatedStar(starList, i * 5, i * 5 + 5, animatedBActors.get(i).getX(), animatedBActors.get(i).getY());
         }
         if(timer.millisElapsed() > 125)
         {
