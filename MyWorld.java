@@ -37,7 +37,7 @@ public class MyWorld extends World
     ArrayList<Star> starList = new ArrayList<Star>();
     ArrayList<Actor> removeList = new ArrayList<Actor>();
     public int score = 0;
-    boolean isStillMoving = false;
+    boolean isStillMoving = true;
     public static boolean stop = false;
     private int combo = 0;
     private int clickCount = 0;
@@ -65,19 +65,7 @@ public class MyWorld extends World
         initilizeActors();
         createBackground();
         addLine();
-        //randomBlocks();
-        BlockA a = new BlockA();
-        BlockB b = new BlockB();
-        BlockA a2 = new BlockA();
-        BlockA a3 = new BlockA();
-        addObject(a, 60, 20);
-        addObject(a2, 60, 60);
-        addObject(a3, 60, 140);
-        addObject(b, 60, 100);
-        blockPosition[1][1] = a;
-        blockPosition[2][1] = a2;
-        blockPosition[4][1] = a3;
-        blockPosition[3][1] = b;
+        randomBlocks();
         stop = false;
         checkRow(10, 13, true);
         checkColumn(10, 13, true);
@@ -115,7 +103,7 @@ public class MyWorld extends World
             }
             if(movingTimer.millisElapsed() > 10)
             {
-                //movingBlockAnimation();
+                movingBlockAnimation();
                 movingTimer.mark();
             }
         }
@@ -567,6 +555,7 @@ public class MyWorld extends World
                     if(isBomb && count < 5)
                     {
                         removeList.clear();
+                        count = 1;
                     }
                     removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
