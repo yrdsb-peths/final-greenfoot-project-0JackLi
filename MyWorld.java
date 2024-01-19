@@ -127,7 +127,7 @@ public class MyWorld extends World
         if(score >= nextScore)
         {
             stepCount += 5;
-            nextScore += 500;
+            nextScore += 1000;
         }
     }
     
