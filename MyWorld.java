@@ -22,7 +22,7 @@ public class MyWorld extends World
     String[][] blockToString = new String[15][10];
     int[] num = new int[4];
     Star star;
-    Label label;
+    Label scoreLabel, stepLabel;
     BlockA blockA;
     BlockB blockB;
     BlockC blockC;
@@ -36,11 +36,12 @@ public class MyWorld extends World
     //int count = -1;
     ArrayList<Star> starList = new ArrayList<Star>();
     ArrayList<Actor> removeList = new ArrayList<Actor>();
-    public int score = 0;
+    public int score = 0, nextScore = 500;
     boolean isStillMoving = true;
     public static boolean stop = false;
     private int combo = 0;
     private int clickCount = 0;
+    private int stepCount = 10;
     private boolean canSwitch = false;
     boolean isTrue, canMove = true, startAnimation, canContinue = false;
     private SimpleTimer timer = new SimpleTimer();
@@ -55,32 +56,34 @@ public class MyWorld extends World
     private ArrayList<ArrowUp> up = new ArrayList<ArrowUp>();
     private ArrayList<ArrowDown> down = new ArrayList<ArrowDown>();
     GreenfootSound sound = new GreenfootSound("sounds/gameMusic.mp3");
+    GreenfootSound merge;
+    GreenfootSound abilityAudio;
     public MyWorld()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(400, 600, 1);
-        label = new Label(score, 30);
-        addObject(label, 50, 100);
         initilizeImages();
         initilizeActors();
         createBackground();
         addLine();
         randomBlocks();
         stop = false;
-        checkRow(10, 13, true);
-        checkColumn(10, 13, true);
-        //sound.playLoop();
+        checkRow(10, 13, true, true);
+        checkColumn(10, 13, true, true);
+        sound.playLoop();
     }
 
     public void act()
     {
-        setScore();
+        setLabel();
+        getScore();
+        checkGameEnd();
         if(!stop)
         {
             if(!isStillMoving)
             {
-                checkRow(10, 13, true);
-                checkColumn(10, 13, true);
+                checkRow(10, 13, true, false);
+                checkColumn(10, 13, true, false);
                 //checkBelow();
             }
             if(!stop)
@@ -113,9 +116,29 @@ public class MyWorld extends World
         }
     }
     
-    private void setScore()
+    private void setLabel()
     {
-        label.setValue(score);
+        scoreLabel.setValue("Score: " + score + " / " + nextScore);
+        stepLabel.setValue("Step: " + stepCount);
+    }
+    
+    private void getScore()
+    {
+        if(score >= nextScore)
+        {
+            stepCount += 5;
+            nextScore += 500;
+        }
+    }
+    
+    private void checkGameEnd()
+    {
+        if(stepCount <= 0)
+        {
+            EndScreen screen = new EndScreen();
+            sound.stop();
+            Greenfoot.setWorld(screen);
+        }
     }
     
     private void displayCombo()
@@ -217,6 +240,8 @@ public class MyWorld extends World
             x = getWidth()/10 - 18;
             y += getHeight()/15;
         }
+        checkRow(10, 13,false, true);
+        checkColumn(10, 13, false, true);
     }
 
     private void generateBlocks()
@@ -278,11 +303,10 @@ public class MyWorld extends World
             clickedActors[1] = Greenfoot.getMouseInfo().getActor();
             if(isClickedBlock(clickedActors[0]) && isClickedBlock(clickedActors[1]))
             {
-                System.out.println("B");
                 System.out.println(clickedActors[0].getX() + " " + clickedActors[1].getX());
                 if(canMove(clickedActors))
                 {
-                    System.out.println("Y");
+                    stepCount--;
                     moveBlocks(clickedActors);
                     if(checkSpecial(clickedActors))
                     {
@@ -344,8 +368,8 @@ public class MyWorld extends World
         if(canContinue)//
         {   
             switchElements(actor); 
-            checkRow(10, 13, false);
-            checkColumn(10, 13, false);
+            checkRow(10, 13, false, true);
+            checkColumn(10, 13, false, true);
             System.out.println("E");
             if(checkSpecial(actor))
             {
@@ -466,7 +490,7 @@ public class MyWorld extends World
         return null;
     }
 
-    private void checkRow(int row, int column, boolean delete)
+    private void checkRow(int row, int column, boolean delete, boolean isSpecial)
     {
         int count = 1;
         boolean isBomb = false;
@@ -515,7 +539,7 @@ public class MyWorld extends World
                 }
                 else 
                 {
-                    if(count >= 4 && delete && checkAbilityActors(removeList, true, false))
+                    if(count >= 4 && delete && checkAbilityActors(removeList, true, false) && !isSpecial)
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
@@ -567,7 +591,7 @@ public class MyWorld extends World
         }
     }
 
-    private void checkColumn(int row, int column, boolean delete)
+    private void checkColumn(int row, int column, boolean delete, boolean isSpecial)
     {
         int count = 1;
         for(int i = 0; i < row; i++)
@@ -587,7 +611,7 @@ public class MyWorld extends World
                 }
                 else 
                 {
-                    if(count >= 4 && delete && checkAbilityActors(removeList, false, true))
+                    if(count >= 4 && delete && checkAbilityActors(removeList, false, true) && !isSpecial)
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
@@ -822,7 +846,8 @@ public class MyWorld extends World
         }
         if(horizontal)
         {
-            sound = new GreenfootSound("sounds/ability1Sound.mp3");
+            merge = new GreenfootSound("sounds/ability1Sound.mp3");
+            merge.play();
             leftArrow = new ArrowLeft();
             rightArrow = new ArrowRight();
             left.add(leftArrow);
@@ -833,7 +858,8 @@ public class MyWorld extends World
         }
         else if(vertical)
         {
-            sound = new GreenfootSound("sounds/ability1Sound.mp3");
+            merge = new GreenfootSound("sounds/ability1Sound.mp3");
+            merge.play();
             upArrow = new ArrowUp();
             downArrow = new ArrowDown();
             up.add(upArrow);
@@ -856,8 +882,8 @@ public class MyWorld extends World
             addObject(swirl, actor.getX(), actor.getY());
             animatedStar(starList, starList.size() - 5, starList.size(), actor.getX(), actor.getY());
             //merge = new GreenfootSound("sounds/ability2Sound.mp3");
+            //merge.play();
         }
-        sound.play();
         startAnimation = true;
         addObject(obj, actor.getX(), actor.getY());
         checkEquals(blockPosition, actor, obj);
@@ -1024,7 +1050,8 @@ public class MyWorld extends World
         {
             if(animatedHActors.get(i).equals(actor[0]) || animatedHActors.get(i).equals(actor[1]))
             {
-                sound = new GreenfootSound("sounds/ability1Active.mp3");
+                abilityAudio = new GreenfootSound("sounds/ability1Active.mp3");
+                abilityAudio.play();
                 horizontal = true;
                 removeObject(left.get(i));
                 removeObject(right.get(i));
@@ -1046,7 +1073,8 @@ public class MyWorld extends World
         {
             if(animatedVActors.get(i).equals(actor[0]) || animatedVActors.get(i).equals(actor[1]))
             {
-                sound = new GreenfootSound("sounds/ability1Active.mp3");
+                abilityAudio = new GreenfootSound("sounds/ability1Active.mp3");
+                abilityAudio.play();
                 vertical = true;
                 removeObject(up.get(i));
                 removeObject(down.get(i));
@@ -1068,7 +1096,8 @@ public class MyWorld extends World
         {
             if(animatedBActors.get(i).equals(actor[0]) || animatedBActors.get(i).equals(actor[1]))
             {
-                sound = new GreenfootSound("sounds/ability2Active.mp3");
+                abilityAudio = new GreenfootSound("sounds/ability2Active.mp3");
+                abilityAudio.play();
                 bomb = true;
                 removeObject(backEffect.get(i));
                 backEffect.remove(i);
@@ -1111,11 +1140,11 @@ public class MyWorld extends World
             swirl = new Swirl(6, 6);
             addObject(swirl, actor[0].getX(), actor[0].getY());
         }
-        sound.play();
     }
 
     public void removeFromArray(Actor actor)
     {
+        
         for(int i = 0; i < blockPosition.length; i++)
         {
             for(int u = 0; u < blockPosition[i].length; u++)
@@ -1135,7 +1164,8 @@ public class MyWorld extends World
             if(animatedHActors.get(i).equals(actor))
             {
                 TrailEffect effect = new TrailEffect(true, false);
-                sound = new GreenfootSound("sounds/ability1Active.mp3");
+                abilityAudio = new GreenfootSound("sounds/ability1Active.mp3");
+                abilityAudio.play();
                 animatedHActors.remove(actor);
                 removeObject(left.get(i));
                 removeObject(right.get(i));
@@ -1148,7 +1178,8 @@ public class MyWorld extends World
             if(animatedVActors.get(i).equals(actor))
             {
                 TrailEffect effect = new TrailEffect(false, true);
-                sound = new GreenfootSound("sounds/ability1Active.mp3");
+                abilityAudio = new GreenfootSound("sounds/ability1Active.mp3");
+                abilityAudio.play();
                 animatedVActors.remove(actor);
                 removeObject(up.get(i));
                 removeObject(down.get(i));
@@ -1162,7 +1193,8 @@ public class MyWorld extends World
             if(animatedBActors.get(i).equals(actor))
             {
                 Swirl swirl = new Swirl(3, 3);
-                sound = new GreenfootSound("sounds/ability2Active.mp3");
+                abilityAudio = new GreenfootSound("sounds/ability2Active.mp3");
+                abilityAudio.play();
                 animatedBActors.remove(actor);
                 removeObject(backEffect.get(i));
                 backEffect.remove(i);
@@ -1174,7 +1206,7 @@ public class MyWorld extends World
                 }
             }
         }
-        sound.play();
+        //sound.play();
     }
     int i = 0;
     private void movingBlockAnimation()
@@ -1225,5 +1257,11 @@ public class MyWorld extends World
             image.scale(100, 900);
             addObject(line2, getWidth()/10 * i, getHeight()/2);
         }
+        WhiteBackground top = new WhiteBackground();
+        scoreLabel = new Label("Score: " + score, 30);
+        stepLabel = new Label("Step: " + stepCount, 30);
+        addObject(top, 0, 0);
+        addObject(scoreLabel, 100, 50);
+        addObject(stepLabel, 300, 50);
     }
 }

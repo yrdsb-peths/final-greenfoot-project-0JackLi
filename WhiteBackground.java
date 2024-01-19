@@ -15,10 +15,10 @@ public class WhiteBackground extends Actor
     GreenfootImage image = getImage();
     public WhiteBackground()
     {
-        image.scale(80, 400);
+        image.scale(800, 160);
     }
     public void act()
     {
-        // Add your action code here.
+        // Add your action code here
     }
 }
