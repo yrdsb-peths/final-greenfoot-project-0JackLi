@@ -18,7 +18,7 @@ public class MyWorld extends World
     Actor animatedActor;
     Actor[] clickedActors = new Actor[2];
     Actor[] blocks;
-    Actor[][] blockPosition = new Actor[15][10];
+    Actor[][] blockPosition = new Actor[13][10];
     String[][] blockToString = new String[15][10];
     int[] num = new int[4];
     Star star;
@@ -39,11 +39,13 @@ public class MyWorld extends World
     public int score = 0;
     boolean isStillMoving = true;
     public static boolean stop = false;
+    private int combo = 0;
     private int clickCount = 0;
     private boolean canSwitch = false;
     boolean isTrue, canMove = true, startAnimation, canContinue = false;
     private SimpleTimer timer = new SimpleTimer();
     private SimpleTimer movingTimer = new SimpleTimer();
+    private SimpleTimer delay = new SimpleTimer();
     private ArrayList<BackEffect> backEffect = new ArrayList<BackEffect>();
     private ArrayList<ArrowLeft> left = new ArrayList<ArrowLeft>();
     private ArrayList<ArrowRight> right = new ArrayList<ArrowRight>();
@@ -52,6 +54,7 @@ public class MyWorld extends World
     private ArrayList<Actor> animatedBActors = new ArrayList<Actor>();
     private ArrayList<ArrowUp> up = new ArrayList<ArrowUp>();
     private ArrayList<ArrowDown> down = new ArrayList<ArrowDown>();
+    GreenfootSound sound = new GreenfootSound("sounds/gameMusic.mp3");
     public MyWorld()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
@@ -64,8 +67,9 @@ public class MyWorld extends World
         addLine();
         randomBlocks();
         stop = false;
-        checkRow(10, 15, true);
-        checkColumn(10, 15, true);
+        checkRow(10, 13, true);
+        checkColumn(10, 13, true);
+        //sound.playLoop();
     }
 
     public void act()
@@ -75,18 +79,19 @@ public class MyWorld extends World
         {
             if(!isStillMoving)
             {
-                checkRow(10, 15, true);
-                checkColumn(10, 15, true);
+                checkRow(10, 13, true);
+                checkColumn(10, 13, true);
                 //checkBelow();
             }
             if(!stop)
             {
                 checkBelow();
             }
-            if(Greenfoot.mouseClicked(null))
+            if(Greenfoot.mouseClicked(null) && !isStillMoving && delay.millisElapsed() > 125)
             {
                 //System.out.println(Greenfoot.getMouseInfo().getY());
                 //removeFromArray(animatedBActors.get(0));
+                combo = 0;
                 if(Greenfoot.getMouseInfo().getButton() == 1)
                 {
                     checkClick();
@@ -111,6 +116,38 @@ public class MyWorld extends World
     private void setScore()
     {
         label.setValue(score);
+    }
+    
+    private void displayCombo()
+    {
+        if(combo >= 4)
+        {
+            
+        }
+        if(combo >= 6)
+        {
+            
+        }
+        if(combo >= 8)
+        {
+            
+        }
+        if(combo >= 10)
+        {
+            
+        }
+    }
+    
+    private void comboSound()
+    {
+        int comboCount = combo;
+        if(combo > 5)
+        {
+            comboCount = 5;
+        }
+        System.out.println(comboCount);
+        sound = new GreenfootSound("sounds/combo" + comboCount + ".mp3");
+        sound.play();
     }
 
     private void animatedStar(ArrayList<Star> list, int start, int end, int x, int y)
@@ -160,9 +197,9 @@ public class MyWorld extends World
     private void randomBlocks()
     {
         int x = getWidth()/10 - 18;
-        int y = getHeight()/15 - 20;
+        int y = getHeight()/15 + 60;
         int count = 2, count2 = 6;
-        for(int i = 0; i < 15; i++)
+        for(int i = 0; i < 13; i++)
         {
             //count = 0;
             for(int u = 0; u < 10; u++)
@@ -183,7 +220,6 @@ public class MyWorld extends World
 
     private void generateBlocks()
     {
-
         for(int u = 0; u < 10; u++)
         {
             if(blockPosition[0][u] == null)
@@ -191,7 +227,7 @@ public class MyWorld extends World
                 initilizeActors();
                 int rand = Greenfoot.getRandomNumber(blocks.length-1);
                 blockPosition[0][u] = blocks[rand];
-                addObject(blocks[rand], 20 + 40 * u, 0);
+                addObject(blocks[rand], 20 + 40 * u, 100);
             }
         }
     }
@@ -241,8 +277,11 @@ public class MyWorld extends World
             clickedActors[1] = Greenfoot.getMouseInfo().getActor();
             if(isClickedBlock(clickedActors[0]) && isClickedBlock(clickedActors[1]))
             {
+                System.out.println("B");
+                System.out.println(clickedActors[0].getX() + " " + clickedActors[1].getX());
                 if(canMove(clickedActors))
                 {
+                    System.out.println("Y");
                     moveBlocks(clickedActors);
                     if(checkSpecial(clickedActors))
                     {
@@ -284,13 +323,28 @@ public class MyWorld extends World
 
     private boolean canMove(Actor[] actor)
     {
-        if(actor[0].getX() + 40 == actor[1].getX() && actor[0].getY() == actor[1].getY() || actor[0].getX() - 40 == actor[1].getX()
-        && actor[0].getY() == actor[1].getY() || actor[0].getX() == actor[1].getX() && actor[0].getY() + 40 == actor[1].getY() ||
-        actor[0].getX() == actor[1].getX() && actor[0].getY() - 40 == actor[1].getY())
+        boolean canContinue = false;
+        for(int i = 0; i < blockPosition.length; i++)
+        {
+            for(int u = 0; u < blockPosition[i].length; u++)
+            {
+                if(blockPosition[i][u].equals(actor[0]))
+                {
+                    if(u > 0 && blockPosition[i][u - 1].equals(actor[1]) || u < blockPosition[i].length - 1 && 
+                    blockPosition[i][u + 1].equals(actor[1]) || i > 0 && blockPosition[i - 1][u].equals(actor[1]) 
+                    || i < blockPosition.length - 1 && blockPosition[i + 1][u].equals(actor[1]))
+                    {
+                        canContinue = true;
+                    }
+                }
+            }
+        }
+        if(canContinue)//
         {   
             switchElements(actor); 
-            checkRow(10, 15, false);
-            checkColumn(10, 15, false);
+            checkRow(10, 13, false);
+            checkColumn(10, 13, false);
+            System.out.println("E");
             if(checkSpecial(actor))
             {
                 return true;
@@ -310,21 +364,33 @@ public class MyWorld extends World
         int count = 0;
         for(int i = 0; i < animatedHActors.size(); i++)
         {
-            if(actor[0].equals(animatedHActors.get(i)) || actor[1].equals(animatedHActors.get(i)))
+            if(actor[0].equals(animatedHActors.get(i)))
+            {
+                count++;
+            }
+            if(actor[1].equals(animatedHActors.get(i)))
             {
                 count++;
             }
         }
         for(int i = 0; i < animatedVActors.size(); i++)
         {
-            if(actor[0].equals(animatedVActors.get(i)) || actor[1].equals(animatedVActors.get(i)))
+            if(actor[0].equals(animatedVActors.get(i)))
+            {
+                count++;
+            }
+            if(actor[1].equals(animatedVActors.get(i)))
             {
                 count++;
             }
         }
         for(int i = 0; i < animatedBActors.size(); i++)
         {
-            if(actor[0].equals(animatedBActors.get(i)) || actor[1].equals(animatedBActors.get(i)))
+            if(actor[0].equals(animatedBActors.get(i)))
+            {
+                count++;
+            }
+            if(actor[1].equals(animatedBActors.get(i)))
             {
                 count++;
             }
@@ -464,7 +530,7 @@ public class MyWorld extends World
                         else if(clickedActors[1] != null && clickedActors[1].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[1]);
-                            if(count == 4 && isBomb)
+                            if(count == 4 && !isBomb)
                             {
                                 checkAbility(clickedActors[1], true, false, false);
                             }
@@ -753,6 +819,7 @@ public class MyWorld extends World
         }
         if(horizontal)
         {
+            sound = new GreenfootSound("sounds/ability1Sound.mp3");
             leftArrow = new ArrowLeft();
             rightArrow = new ArrowRight();
             left.add(leftArrow);
@@ -763,6 +830,7 @@ public class MyWorld extends World
         }
         else if(vertical)
         {
+            sound = new GreenfootSound("sounds/ability1Sound.mp3");
             upArrow = new ArrowUp();
             downArrow = new ArrowDown();
             up.add(upArrow);
@@ -784,7 +852,9 @@ public class MyWorld extends World
             }
             addObject(swirl, actor.getX(), actor.getY());
             animatedStar(starList, starList.size() - 5, starList.size(), actor.getX(), actor.getY());
+            //merge = new GreenfootSound("sounds/ability2Sound.mp3");
         }
+        sound.play();
         startAnimation = true;
         addObject(obj, actor.getX(), actor.getY());
         checkEquals(blockPosition, actor, obj);
@@ -802,7 +872,8 @@ public class MyWorld extends World
             x1[i] = left.get(i).getX();
             x2[i] = right.get(i).getX();
             //formed another one
-            if(x2[i] - (animatedHActors.get(i).getX() + 15) < 0 || x1[i] - (animatedHActors.get(i).getX() + 15) > 0)
+            if(x2[i] - (animatedHActors.get(i).getX() + 15) < 0 || x2[i] - (animatedHActors.get(i).getX() + 15) > 4
+            || x1[i] - (animatedHActors.get(i).getX() - 18) > 0 || (animatedHActors.get(i).getX() - 18) - x1[i] > 4)
             {
                 x1[i] = animatedHActors.get(i).getX() - 18 + num[0];
                 x2[i] = animatedHActors.get(i).getX() + 15 + num[1];
@@ -814,7 +885,8 @@ public class MyWorld extends World
         {
             y1[i] = up.get(i).getY();
             y2[i] = down.get(i).getY();
-            if(y2[i] - (animatedVActors.get(i).getY() + 17) < 0 || y1[i] - (animatedVActors.get(i).getY() - 16) > 0)
+            if(y2[i] - (animatedVActors.get(i).getY() + 17) < 0 || y2[i] - (animatedVActors.get(i).getY() + 17) > 4
+            || y1[i] - (animatedVActors.get(i).getY() - 16) > 0 || (animatedVActors.get(i).getY() - 16) - y1[i] > 4)
             {
                 y1[i] = animatedVActors.get(i).getY() - 16 + num[2];
                 y2[i] = animatedVActors.get(i).getY() + 17 + num[3];
@@ -904,10 +976,12 @@ public class MyWorld extends World
     {
         if(num >= limit)
         {
-            for(int i = 0; i < list.size(); i++)
+            if(delete)
             {
-                if(delete)
+                combo++;
+                for(int i = 0; i < list.size(); i++)
                 {
+                   
                     if(list.get(i) != null)
                     {
                         removeFromArray(list.get(i));
@@ -918,6 +992,8 @@ public class MyWorld extends World
                         clickedActors[1] = null;
                     }
                 }
+                comboSound();
+                System.out.println("F");
             }
             canSwitch = true;
         }
@@ -945,6 +1021,7 @@ public class MyWorld extends World
         {
             if(animatedHActors.get(i).equals(actor[0]) || animatedHActors.get(i).equals(actor[1]))
             {
+                sound = new GreenfootSound("sounds/ability1Active.mp3");
                 horizontal = true;
                 removeObject(left.get(i));
                 removeObject(right.get(i));
@@ -966,6 +1043,7 @@ public class MyWorld extends World
         {
             if(animatedVActors.get(i).equals(actor[0]) || animatedVActors.get(i).equals(actor[1]))
             {
+                sound = new GreenfootSound("sounds/ability1Active.mp3");
                 vertical = true;
                 removeObject(up.get(i));
                 removeObject(down.get(i));
@@ -987,6 +1065,7 @@ public class MyWorld extends World
         {
             if(animatedBActors.get(i).equals(actor[0]) || animatedBActors.get(i).equals(actor[1]))
             {
+                sound = new GreenfootSound("sounds/ability2Active.mp3");
                 bomb = true;
                 removeObject(backEffect.get(i));
                 backEffect.remove(i);
@@ -1029,6 +1108,7 @@ public class MyWorld extends World
             swirl = new Swirl(6, 6);
             addObject(swirl, actor[0].getX(), actor[0].getY());
         }
+        sound.play();
     }
 
     public void removeFromArray(Actor actor)
@@ -1052,6 +1132,7 @@ public class MyWorld extends World
             if(animatedHActors.get(i).equals(actor))
             {
                 TrailEffect effect = new TrailEffect(true, false);
+                sound = new GreenfootSound("sounds/ability1Active.mp3");
                 animatedHActors.remove(actor);
                 removeObject(left.get(i));
                 removeObject(right.get(i));
@@ -1064,6 +1145,7 @@ public class MyWorld extends World
             if(animatedVActors.get(i).equals(actor))
             {
                 TrailEffect effect = new TrailEffect(false, true);
+                sound = new GreenfootSound("sounds/ability1Active.mp3");
                 animatedVActors.remove(actor);
                 removeObject(up.get(i));
                 removeObject(down.get(i));
@@ -1077,26 +1159,21 @@ public class MyWorld extends World
             if(animatedBActors.get(i).equals(actor))
             {
                 Swirl swirl = new Swirl(3, 3);
+                sound = new GreenfootSound("sounds/ability2Active.mp3");
                 animatedBActors.remove(actor);
                 removeObject(backEffect.get(i));
                 backEffect.remove(i);
                 addObject(swirl, actor.getX(), actor.getY());
-            }
-        }
-        for(int i = 0; i < animatedBActors.size(); i++)
-        {
-            if(animatedBActors.get(i).equals(actor))
-            {
                 for(int u = 0; u < 5; u++)
                 {
                     removeObject(starList.get(i * 5));
                     starList.remove(i * 5);
                 }
             }
-            animatedBActors.remove(actor);
         }
+        sound.play();
     }
-    int c = 0;
+    int i = 0;
     private void movingBlockAnimation()
     {
         isStillMoving = false;
@@ -1104,18 +1181,19 @@ public class MyWorld extends World
         {
             for(int u = 0; u < blockPosition[i].length; u++)
             {
-                if(blockPosition[i][u] != null && blockPosition[i][u].getY() < 20 + 40 * i)
+                if(blockPosition[i][u] != null && blockPosition[i][u].getY() < 100 + 40 * i)
                 {
                     blockPosition[i][u].setLocation(blockPosition[i][u].getX(), blockPosition[i][u].getY() + 20);
                     isStillMoving = true;
+                    delay.mark();
                 }
             }
         }
-        c++;
-        if(c >= 2)
+        i++;
+        if(i >= 2)
         {
             generateBlocks();
-            c = 0;
+            i = 0;
         }
     }
 
