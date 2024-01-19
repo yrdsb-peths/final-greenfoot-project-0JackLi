@@ -37,7 +37,7 @@ public class MyWorld extends World
     ArrayList<Star> starList = new ArrayList<Star>();
     ArrayList<Actor> removeList = new ArrayList<Actor>();
     public int score = 0;
-    boolean isStillMoving = true;
+    boolean isStillMoving = false;
     public static boolean stop = false;
     private int combo = 0;
     private int clickCount = 0;
@@ -65,7 +65,19 @@ public class MyWorld extends World
         initilizeActors();
         createBackground();
         addLine();
-        randomBlocks();
+        //randomBlocks();
+        BlockA a = new BlockA();
+        BlockB b = new BlockB();
+        BlockA a2 = new BlockA();
+        BlockA a3 = new BlockA();
+        addObject(a, 60, 20);
+        addObject(a2, 60, 60);
+        addObject(a3, 60, 140);
+        addObject(b, 60, 100);
+        blockPosition[1][1] = a;
+        blockPosition[2][1] = a2;
+        blockPosition[4][1] = a3;
+        blockPosition[3][1] = b;
         stop = false;
         checkRow(10, 13, true);
         checkColumn(10, 13, true);
@@ -103,7 +115,7 @@ public class MyWorld extends World
             }
             if(movingTimer.millisElapsed() > 10)
             {
-                movingBlockAnimation();
+                //movingBlockAnimation();
                 movingTimer.mark();
             }
         }
@@ -146,8 +158,9 @@ public class MyWorld extends World
             comboCount = 5;
         }
         System.out.println(comboCount);
-        sound = new GreenfootSound("sounds/combo" + comboCount + ".mp3");
-        sound.play();
+        //sound = new GreenfootSound("sounds/combo" + comboCount + ".mp3");
+        GreenfootSound sound2 = new GreenfootSound("sounds/combo" + comboCount + ".mp3");
+        sound2.play();
     }
 
     private void animatedStar(ArrayList<Star> list, int start, int end, int x, int y)
@@ -328,11 +341,12 @@ public class MyWorld extends World
         {
             for(int u = 0; u < blockPosition[i].length; u++)
             {
-                if(blockPosition[i][u].equals(actor[0]))
+                if(blockPosition[i][u] != null && blockPosition[i][u].equals(actor[0]))
                 {
-                    if(u > 0 && blockPosition[i][u - 1].equals(actor[1]) || u < blockPosition[i].length - 1 && 
-                    blockPosition[i][u + 1].equals(actor[1]) || i > 0 && blockPosition[i - 1][u].equals(actor[1]) 
-                    || i < blockPosition.length - 1 && blockPosition[i + 1][u].equals(actor[1]))
+                    if(u > 0 && blockPosition[i][u-1] != null && blockPosition[i][u - 1].equals(actor[1]) || u < blockPosition[i].length - 1 && 
+                     blockPosition[i][u + 1] != null && blockPosition[i][u + 1].equals(actor[1]) || i > 0 && blockPosition[i - 1][u] != null && 
+                     blockPosition[i - 1][u].equals(actor[1]) 
+                    || i < blockPosition.length - 1 && blockPosition[i + 1][u] != null &&  blockPosition[i + 1][u].equals(actor[1]))
                     {
                         canContinue = true;
                     }
@@ -595,7 +609,7 @@ public class MyWorld extends World
                             }
                             else if(count > 4)
                             {
-                                //checkAbility(clickedActors[0], false, false, true);
+                                checkAbility(clickedActors[0], false, false, true);
                             }
                         }
                         else if(clickedActors[1] != null && clickedActors[1].getClass().equals(removeList.get(0).getClass()))
@@ -607,7 +621,7 @@ public class MyWorld extends World
                             }
                             else if(count > 4)
                             {
-                                //checkAbility(clickedActors[1], false, false, true);
+                                checkAbility(clickedActors[1], false, false, true);
                             }
                         }
                         else if(count == 4)
@@ -617,7 +631,7 @@ public class MyWorld extends World
                         }
                         else if(count > 4)
                         {
-
+                            checkAbility(clickedActors[1], false, false, true);
                         }
                     }
                     removeBlocks(count, 3, removeList, delete);
