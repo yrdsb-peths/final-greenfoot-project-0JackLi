@@ -168,7 +168,6 @@ public class MyWorld extends World
         {
             comboCount = 5;
         }
-        System.out.println(comboCount);
         //sound = new GreenfootSound("sounds/combo" + comboCount + ".mp3");
         GreenfootSound sound2 = new GreenfootSound("sounds/combo" + comboCount + ".mp3");
         sound2.play();
@@ -303,7 +302,6 @@ public class MyWorld extends World
             clickedActors[1] = Greenfoot.getMouseInfo().getActor();
             if(isClickedBlock(clickedActors[0]) && isClickedBlock(clickedActors[1]))
             {
-                System.out.println(clickedActors[0].getX() + " " + clickedActors[1].getX());
                 if(canMove(clickedActors))
                 {
                     stepCount--;
@@ -370,7 +368,6 @@ public class MyWorld extends World
             switchElements(actor); 
             checkRow(10, 13, false, true);
             checkColumn(10, 13, false, true);
-            System.out.println("E");
             if(checkSpecial(actor))
             {
                 return true;
@@ -1022,7 +1019,6 @@ public class MyWorld extends World
                     }
                 }
                 comboSound();
-                System.out.println("F");
             }
             canSwitch = true;
         }
