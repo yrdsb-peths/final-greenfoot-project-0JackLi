@@ -20,6 +20,8 @@ public class TitleScreen extends World
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(400, 600, 1); 
         sound.playLoop();
+        Label label = new Label("Click anywhere to start", 30);
+        addObject(label, 200, 500);
     }
     
     public void act()

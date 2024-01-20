@@ -13,11 +13,15 @@ public class EndScreen extends World
      * Constructor for objects of class EndScreen.
      * 
      */
-    public EndScreen()
+    GreenfootSound sound = new GreenfootSound("sounds/gameOver.mp3");
+    public EndScreen(int score)
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(600, 400, 1); 
-        Label label = new Label("GameOver", 80);
-        addObject(label, 250, 200);
+        super(400, 600, 1); 
+        sound.playLoop();
+        Label label = new Label("GameOver", 60);
+        Label scoreLabel = new Label("Final Score: " + score, 40);
+        addObject(label, 200, 200);
+        addObject(scoreLabel, 190, 400);
     }
 }

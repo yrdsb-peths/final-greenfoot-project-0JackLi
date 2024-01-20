@@ -15,11 +15,10 @@ public class MyWorld extends World
      * Constructor for objects of class MyWorld.
      * 
      */
-    Actor animatedActor;
-    Actor[] clickedActors = new Actor[2];
-    Actor[] blocks;
-    Actor[][] blockPosition = new Actor[13][10];
-    String[][] blockToString = new String[15][10];
+    private Actor animatedActor;
+    private Actor[] clickedActors = new Actor[2];
+    private Actor[] blocks;
+    private Actor[][] blockPosition = new Actor[13][10];
     int[] num = new int[4];
     Star star;
     Label scoreLabel, stepLabel;
@@ -33,20 +32,18 @@ public class MyWorld extends World
     Line line;
     Line2 line2;
     Frame frame = new Frame();
-    //int count = -1;
-    ArrayList<Star> starList = new ArrayList<Star>();
-    ArrayList<Actor> removeList = new ArrayList<Actor>();
     public int score = 0, nextScore = 500;
-    boolean isStillMoving = false;
+    boolean isStillMoving = true, isTrue, canMove = true, startAnimation, canContinue = false;
     public static boolean stop = false;
     private int combo = 0;
     private int clickCount = 0;
     private int stepCount = 10;
     private boolean canSwitch = false;
-    boolean isTrue, canMove = true, startAnimation, canContinue = false;
     private SimpleTimer timer = new SimpleTimer();
     private SimpleTimer movingTimer = new SimpleTimer();
     private SimpleTimer delay = new SimpleTimer();
+    private ArrayList<Star> starList = new ArrayList<Star>();
+    private ArrayList<Actor> removeList = new ArrayList<Actor>();
     private ArrayList<BackEffect> backEffect = new ArrayList<BackEffect>();
     private ArrayList<ArrowLeft> left = new ArrayList<ArrowLeft>();
     private ArrayList<ArrowRight> right = new ArrayList<ArrowRight>();
@@ -55,9 +52,8 @@ public class MyWorld extends World
     private ArrayList<Actor> animatedBActors = new ArrayList<Actor>();
     private ArrayList<ArrowUp> up = new ArrayList<ArrowUp>();
     private ArrayList<ArrowDown> down = new ArrayList<ArrowDown>();
-    GreenfootSound sound = new GreenfootSound("sounds/gameMusic.mp3");
-    GreenfootSound merge;
-    GreenfootSound abilityAudio;
+    private GreenfootSound sound = new GreenfootSound("sounds/gameMusic.mp3");
+    private GreenfootSound merge, abilityAudio, comboAudio;
     public MyWorld()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
@@ -84,7 +80,6 @@ public class MyWorld extends World
             {
                 checkRow(10, 13, true);
                 checkColumn(10, 13, true);
-                //checkBelow();
             }
             if(!stop)
             {
@@ -92,8 +87,6 @@ public class MyWorld extends World
             }
             if(Greenfoot.mouseClicked(null) && !isStillMoving && delay.millisElapsed() > 125)
             {
-                //System.out.println(Greenfoot.getMouseInfo().getY());
-                //removeFromArray(animatedBActors.get(0));
                 combo = 0;
                 if(Greenfoot.getMouseInfo().getButton() == 1)
                 {
@@ -127,7 +120,7 @@ public class MyWorld extends World
         if(score >= nextScore)
         {
             stepCount += 5;
-            nextScore += 1000;
+            nextScore += 1500;
         }
     }
     
@@ -135,7 +128,7 @@ public class MyWorld extends World
     {
         if(stepCount <= 0)
         {
-            EndScreen screen = new EndScreen();
+            EndScreen screen = new EndScreen(score);
             sound.stop();
             Greenfoot.setWorld(screen);
         }
@@ -168,9 +161,8 @@ public class MyWorld extends World
         {
             comboCount = 5;
         }
-        //sound = new GreenfootSound("sounds/combo" + comboCount + ".mp3");
-        GreenfootSound sound2 = new GreenfootSound("sounds/combo" + comboCount + ".mp3");
-        sound2.play();
+        comboAudio= new GreenfootSound("sounds/combo" + comboCount + ".mp3");
+        comboAudio.play();
     }
 
     private void animatedStar(ArrayList<Star> list, int start, int end, int x, int y)
@@ -221,7 +213,7 @@ public class MyWorld extends World
     {
         int x = getWidth()/10 - 18;
         int y = getHeight()/15 + 60;
-        int count = 2, count2 = 6;
+        int count = 2, count2 = 3;
         for(int i = 0; i < 13; i++)
         {
             //count = 0;
@@ -541,7 +533,7 @@ public class MyWorld extends World
                         removeList.clear();
                         count = 1;
                     }
-                    if(count >= 4 && delete && checkAbilityActors(removeList, true, false))
+                    if(count >= 4 && delete && checkAbilityActors(removeList, count, true, false))
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
@@ -608,7 +600,7 @@ public class MyWorld extends World
                 }
                 else 
                 {
-                    if(count >= 4 && delete && checkAbilityActors(removeList, false, true))
+                    if(count >= 4 && delete && checkAbilityActors(removeList, count, false, true))
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
@@ -654,7 +646,7 @@ public class MyWorld extends World
         }
     }
 
-    private boolean checkAbilityActors(ArrayList<Actor> list, boolean horizontal, boolean vertical)
+    private boolean checkAbilityActors(ArrayList<Actor> list, int count, boolean horizontal, boolean vertical)
     {
         for(int i = 0; i < animatedHActors.size(); i++)
         {
@@ -667,6 +659,11 @@ public class MyWorld extends World
                         TrailEffect effect = new TrailEffect(false, true);
                         addObject(effect, clickedActors[0].getX(), clickedActors[0].getY());
                     }
+                    else if(vertical && clickedActors[0]!= null && count > 5)
+                    {
+                        Swirl swirl = new Swirl(6, 6);
+                        addObject(swirl, clickedActors[0].getX(), clickedActors[0].getY());
+                    }
                     return false;
                 }
             }
@@ -678,10 +675,15 @@ public class MyWorld extends World
             {
                 if(list.get(u).equals(animatedVActors.get(i)))
                 {
-                    if(horizontal && clickedActors[0]!= null)
+                    if(horizontal && clickedActors[0]!= null && count <= 4)
                     {
                         TrailEffect effect = new TrailEffect(true, false);
                         addObject(effect, clickedActors[0].getX(), clickedActors[0].getY());
+                    }
+                    else if(horizontal && clickedActors[0] != null && count >= 5)
+                    {
+                        Swirl swirl = new Swirl(6, 6);
+                        addObject(swirl, clickedActors[0].getX(), clickedActors[0].getY());
                     }
                     return false;
                 }
@@ -694,11 +696,20 @@ public class MyWorld extends World
             {
                 if(list.get(u).equals(animatedBActors.get(i)))
                 {
-                    if(clickedActors[0] != null)
+                    if(clickedActors[0] != null && count >= 5)
                     {
                         Swirl swirl = new Swirl(6, 6);
                         addObject(swirl, clickedActors[0].getX(), clickedActors[0].getY());
-                        System.out.println("TRUE");
+                    }
+                    else if(clickedActors[0] != null && count <= 4 && vertical)
+                    {
+                        TrailEffect trail = new TrailEffect(false, true);
+                        addObject(trail, clickedActors[0].getX(), clickedActors[0].getY());
+                    }
+                    else if(clickedActors[0] != null && count <= 4 && horizontal)
+                    {
+                        TrailEffect trail = new TrailEffect(true, false);
+                        addObject(trail, clickedActors[0].getX(), clickedActors[0].getY());
                     }
                     return false;
                 }
@@ -978,8 +989,6 @@ public class MyWorld extends World
                 else
                 {
                     canMove = true;
-                    //up.get(i).setLocation(animatedVActors.get(i).getX() - 2, y1[i] + 1);
-                    //down.get(i).setLocation(animatedVActors.get(i).getX() - 2, y2[i] - 1);
                 }
             }
             timer.mark();
@@ -998,11 +1007,6 @@ public class MyWorld extends World
                 }
             }
         }
-    }
-
-    public void removeBlock(Actor actor)
-    {
-
     }
 
     private void removeBlocks(int num, int limit, ArrayList<Actor> list, boolean delete)
@@ -1043,7 +1047,6 @@ public class MyWorld extends World
                 || blockPosition[i][u] != null && blockPosition[i][u].equals(actor[1]))
                 {
                     blockPosition[i][u] = null;
-                    blockToString[i][u] = null;
                     score += 10;
                 }
             }
@@ -1156,7 +1159,6 @@ public class MyWorld extends World
                 if(blockPosition[i][u] != null && blockPosition[i][u].equals(actor))
                 {
                     blockPosition[i][u] = null;
-                    blockToString[i][u] = null;
                     Phase phase = new Phase();
                     addObject(phase, actor.getX(), actor.getY());
                     score += 10;
