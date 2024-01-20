@@ -37,7 +37,7 @@ public class MyWorld extends World
     ArrayList<Star> starList = new ArrayList<Star>();
     ArrayList<Actor> removeList = new ArrayList<Actor>();
     public int score = 0, nextScore = 500;
-    boolean isStillMoving = true;
+    boolean isStillMoving = false;
     public static boolean stop = false;
     private int combo = 0;
     private int clickCount = 0;
@@ -68,8 +68,8 @@ public class MyWorld extends World
         addLine();
         randomBlocks();
         stop = false;
-        checkRow(10, 13, true, true);
-        checkColumn(10, 13, true, true);
+        checkRow(10, 13, true);
+        checkColumn(10, 13, true);
         sound.playLoop();
     }
 
@@ -82,8 +82,8 @@ public class MyWorld extends World
         {
             if(!isStillMoving)
             {
-                checkRow(10, 13, true, false);
-                checkColumn(10, 13, true, false);
+                checkRow(10, 13, true);
+                checkColumn(10, 13, true);
                 //checkBelow();
             }
             if(!stop)
@@ -239,8 +239,8 @@ public class MyWorld extends World
             x = getWidth()/10 - 18;
             y += getHeight()/15;
         }
-        checkRow(10, 13,false, true);
-        checkColumn(10, 13, false, true);
+        checkRow(10, 13,false);
+        checkColumn(10, 13, false);
     }
 
     private void generateBlocks()
@@ -366,8 +366,8 @@ public class MyWorld extends World
         if(canContinue)//
         {   
             switchElements(actor); 
-            checkRow(10, 13, false, true);
-            checkColumn(10, 13, false, true);
+            checkRow(10, 13, false);
+            checkColumn(10, 13, false);
             if(checkSpecial(actor))
             {
                 return true;
@@ -487,7 +487,7 @@ public class MyWorld extends World
         return null;
     }
 
-    private void checkRow(int row, int column, boolean delete, boolean isSpecial)
+    private void checkRow(int row, int column, boolean delete)
     {
         int count = 1;
         boolean isBomb = false;
@@ -536,12 +536,17 @@ public class MyWorld extends World
                 }
                 else 
                 {
-                    if(count >= 4 && delete && checkAbilityActors(removeList, true, false) && !isSpecial)
+                    if(isBomb && count < 5)
+                    {
+                        removeList.clear();
+                        count = 1;
+                    }
+                    if(count >= 4 && delete && checkAbilityActors(removeList, true, false))
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[0]);
-                            if(count == 4 && !isBomb)
+                            if(count == 4)
                             {
                                 checkAbility(clickedActors[0], true, false, false);
                             }
@@ -553,7 +558,7 @@ public class MyWorld extends World
                         else if(clickedActors[1] != null && clickedActors[1].getClass().equals(removeList.get(0).getClass()))
                         {
                             removeList.remove(clickedActors[1]);
-                            if(count == 4 && !isBomb)
+                            if(count == 4)
                             {
                                 checkAbility(clickedActors[1], true, false, false);
                             }
@@ -562,7 +567,7 @@ public class MyWorld extends World
                                 checkAbility(clickedActors[1], false, false, true);
                             }
                         }
-                        else if(count == 4 && !isBomb)
+                        else if(count == 4)
                         {
                             checkAbility(removeList.get(0), true, false, false);
                             removeList.remove(removeList.get(0));
@@ -572,11 +577,6 @@ public class MyWorld extends World
                             checkAbility(removeList.get(0), false, false, true);
                             removeList.remove(removeList.get(0));
                         }
-                    }
-                    if(isBomb && count < 5)
-                    {
-                        removeList.clear();
-                        count = 1;
                     }
                     removeBlocks(count, 3, removeList, delete);
                     removeList.clear();
@@ -588,7 +588,7 @@ public class MyWorld extends World
         }
     }
 
-    private void checkColumn(int row, int column, boolean delete, boolean isSpecial)
+    private void checkColumn(int row, int column, boolean delete)
     {
         int count = 1;
         for(int i = 0; i < row; i++)
@@ -608,7 +608,7 @@ public class MyWorld extends World
                 }
                 else 
                 {
-                    if(count >= 4 && delete && checkAbilityActors(removeList, false, true) && !isSpecial)
+                    if(count >= 4 && delete && checkAbilityActors(removeList, false, true))
                     {
                         if(clickedActors[0] != null && clickedActors[0].getClass().equals(removeList.get(0).getClass()))
                         {
@@ -641,7 +641,8 @@ public class MyWorld extends World
                         }
                         else if(count > 4)
                         {
-                            checkAbility(clickedActors[1], false, false, true);
+                            checkAbility(removeList.get(0), false, false, true);
+                            removeList.remove(removeList.get(0));
                         }
                     }
                     removeBlocks(count, 3, removeList, delete);
@@ -687,12 +688,18 @@ public class MyWorld extends World
             }
         }
 
-        for(int i = 0; i < animatedHActors.size(); i++)
+        for(int i = 0; i < animatedBActors.size(); i++)
         {
             for(int u = 0; u < list.size(); u++)
             {
-                if(list.get(u).equals(animatedHActors.get(i)))
+                if(list.get(u).equals(animatedBActors.get(i)))
                 {
+                    if(clickedActors[0] != null)
+                    {
+                        Swirl swirl = new Swirl(6, 6);
+                        addObject(swirl, clickedActors[0].getX(), clickedActors[0].getY());
+                        System.out.println("TRUE");
+                    }
                     return false;
                 }
             }
@@ -899,7 +906,7 @@ public class MyWorld extends World
             x2[i] = right.get(i).getX();
             //formed another one
             if(x2[i] - (animatedHActors.get(i).getX() + 15) < 0 || x2[i] - (animatedHActors.get(i).getX() + 15) > 4
-            || x1[i] - (animatedHActors.get(i).getX() - 18) > 0 || (animatedHActors.get(i).getX() - 18) - x1[i] > 4)
+            || x1[i] - (animatedHActors.get(i).getX() - 16) > 0 || (animatedHActors.get(i).getX() - 16) - x1[i] > 4)
             {
                 x1[i] = animatedHActors.get(i).getX() - 18 + num[0];
                 x2[i] = animatedHActors.get(i).getX() + 15 + num[1];
@@ -929,7 +936,7 @@ public class MyWorld extends World
         {
             for(int i = 0; i < left.size(); i++)
             {
-                if((animatedHActors.get(i).getX() - 18) - left.get(i).getX() < 4 && canMove)
+                if((animatedHActors.get(i).getX() - 16) - left.get(i).getX() < 4 && canMove)
                 {
                     num[0] -= 1;
                     num[1] += 1;
@@ -1007,7 +1014,6 @@ public class MyWorld extends World
                 combo++;
                 for(int i = 0; i < list.size(); i++)
                 {
-                   
                     if(list.get(i) != null)
                     {
                         removeFromArray(list.get(i));
@@ -1136,6 +1142,8 @@ public class MyWorld extends World
             swirl = new Swirl(6, 6);
             addObject(swirl, actor[0].getX(), actor[0].getY());
         }
+        clickedActors[0] = null;
+        clickedActors[1] = null;
     }
 
     public void removeFromArray(Actor actor)
