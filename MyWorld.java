@@ -58,7 +58,6 @@ public class MyWorld extends World
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(400, 600, 1);
-        initilizeImages();
         initilizeActors();
         createBackground();
         addLine();
@@ -109,12 +108,27 @@ public class MyWorld extends World
         }
     }
     
+    /*
+     * initlize the all the actors
+     */
+    private void initilizeActors()
+    {
+        blocks = new Actor[]{blockA = new BlockA(), blockB = new BlockB(), blockC = new BlockC(),
+            blockD = new BlockD(), blockE = new BlockE(), blockF = new BlockF()};
+    }
+    
+    /*
+     * update the score and step count of the game
+     */
     private void setLabel()
     {
         scoreLabel.setValue("Score: " + score + " / " + nextScore);
         stepLabel.setValue("Step: " + stepCount);
     }
     
+    /*
+     * adds more step and set the score goal
+     */
     private void getScore()
     {
         if(score >= nextScore)
@@ -124,6 +138,10 @@ public class MyWorld extends World
         }
     }
     
+    /*
+     * check to see if the game will end
+     * The game will end when the step become 0
+     */
     private void checkGameEnd()
     {
         if(stepCount <= 0)
@@ -134,26 +152,9 @@ public class MyWorld extends World
         }
     }
     
-    private void displayCombo()
-    {
-        if(combo >= 4)
-        {
-            
-        }
-        if(combo >= 6)
-        {
-            
-        }
-        if(combo >= 8)
-        {
-            
-        }
-        if(combo >= 10)
-        {
-            
-        }
-    }
-    
+    /*
+     * sets the combo audio when removing blocks
+     */
     private void comboSound()
     {
         int comboCount = combo;
@@ -165,6 +166,9 @@ public class MyWorld extends World
         comboAudio.play();
     }
 
+    /*
+     * animate the star object 
+     */
     private void animatedStar(ArrayList<Star> list, int start, int end, int x, int y)
     {
         GreenfootImage image;
@@ -197,26 +201,16 @@ public class MyWorld extends World
             list.get(i).setLocation(x, y);
         }
     }
-
-    private void initilizeActors()
-    {
-        blocks = new Actor[]{blockA = new BlockA(), blockB = new BlockB(), blockC = new BlockC(),
-            blockD = new BlockD(), blockE = new BlockE(), blockF = new BlockF()};
-    }
-
-    private void initilizeImages()
-    {
-
-    }
-    //15 10
+    
+    /*
+     * adds random blocks on the screen and set the blocks in the array
+     */
     private void randomBlocks()
     {
         int x = getWidth()/10 - 18;
         int y = getHeight()/15 + 60;
-        int count = 2, count2 = 3;
         for(int i = 0; i < 13; i++)
         {
-            //count = 0;
             for(int u = 0; u < 10; u++)
             {
                 if(blockPosition[i][u] == null)
@@ -235,6 +229,9 @@ public class MyWorld extends World
         checkColumn(10, 13, false);
     }
 
+    /*
+     * generates blocks on the screen
+     */
     private void generateBlocks()
     {
         for(int u = 0; u < 10; u++)
@@ -249,6 +246,9 @@ public class MyWorld extends World
         }
     }
 
+    /*
+     * check the bottem of all the actor in the array
+     */
     private void checkBelow()
     {
         for(int i = 0; i < blockPosition.length; i++)
@@ -263,10 +263,12 @@ public class MyWorld extends World
                 }
             }
         }
-        //randomBlocks();
-        //convertToString(blockPosition);
     }
 
+    /*
+     * check the click of the user 
+     * and gets the actor that is clicked
+     */
     private void checkClick()
     {
         int x = 0, y = 0;
@@ -315,6 +317,9 @@ public class MyWorld extends World
         }
     }
 
+    /*
+     * check if the user is clicking on a specific actor
+     */
     private boolean isClickedBlock(Actor actor)
     {
         for(int i = 0; i < blocks.length; i++)
@@ -327,15 +332,20 @@ public class MyWorld extends World
         return false;
     }
 
+    /*
+     * change the location of two actors
+     */
     private void moveBlocks(Actor[] actor)
     {
         int x = actor[0].getX();
         int y = actor[0].getY();
         actor[0].setLocation(actor[1].getX(), actor[1].getY());
         actor[1].setLocation(x, y);
-        //switchElements(actor);
     }
 
+    /*
+     * check if two actors can switch spots
+     */
     private boolean canMove(Actor[] actor)
     {
         boolean canContinue = false;
@@ -355,7 +365,7 @@ public class MyWorld extends World
                 }
             }
         }
-        if(canContinue)//
+        if(canContinue)
         {   
             switchElements(actor); 
             checkRow(10, 13, false);
@@ -374,6 +384,9 @@ public class MyWorld extends World
         return false;
     }
 
+    /*
+     * check if the actor is special (if the actor has special ability)
+     */
     private boolean checkSpecial(Actor[] actor)
     {
         int count = 0;
@@ -417,6 +430,9 @@ public class MyWorld extends World
         return false;
     }
 
+    /*
+     * switch two actor in the array
+     */
     private void switchElements(Actor[] actor)
     {
         int[] column = new int[2];
@@ -440,45 +456,11 @@ public class MyWorld extends World
         Actor lastActor = blockPosition[column[0]][row[0]];
         blockPosition[column[0]][row[0]] = blockPosition[column[1]][row[1]];
         blockPosition[column[1]][row[1]] = lastActor;
-        //convertToString(blockPosition);
     }
 
-    private String actorsToString(Actor actor)
-    {
-        if(actor != null)
-        {
-            if(actor.equals(blockA))
-            {
-                return "fox";
-            }
-            else if(actor.equals(blockB))
-            {
-                return "bear";
-            }
-            else if(actor.equals(blockC))
-            {
-                return "chicken";
-            }
-            else if(actor.equals(blockD))
-            {
-                return "rabbit";
-            }
-            else if(actor.equals(blockE))
-            {
-                return "mouse";
-            }
-            else if(actor.equals(blockF))
-            {
-                return "cat";
-            }
-            else
-            {
-                return "panda";
-            }
-        }
-        return null;
-    }
-
+    /*
+     * check row of the 2D array and adds ability to actors
+     */
     private void checkRow(int row, int column, boolean delete)
     {
         int count = 1;
@@ -579,7 +561,10 @@ public class MyWorld extends World
             removeBlocks(count, 3, removeList, delete);
         }
     }
-
+    
+     /*
+     * check column of the 2D array and adds ability to actors
+     */
     private void checkColumn(int row, int column, boolean delete)
     {
         int count = 1;
@@ -646,6 +631,10 @@ public class MyWorld extends World
         }
     }
 
+     /*
+     * check if the actors has speical ability
+     * and perform special ability
+     */
     private boolean checkAbilityActors(ArrayList<Actor> list, int count, boolean horizontal, boolean vertical)
     {
         for(int i = 0; i < animatedHActors.size(); i++)
@@ -718,6 +707,9 @@ public class MyWorld extends World
         return true;
     }
 
+    /*
+     * check to see there are actors to delete
+     */
     private boolean checkIfPossible()
     {
         for(int i = 0; i < blockPosition.length; i++)
@@ -811,6 +803,9 @@ public class MyWorld extends World
         return false;
     }
 
+    /*
+     * add an ability to an actor and set the image of the actor
+     */
     private void checkAbility(Actor actor, boolean horizontal, boolean vertical, boolean bomb)
     {
         Actor obj = null;
@@ -896,8 +891,6 @@ public class MyWorld extends World
             }
             addObject(swirl, actor.getX(), actor.getY());
             animatedStar(starList, starList.size() - 5, starList.size(), actor.getX(), actor.getY());
-            //merge = new GreenfootSound("sounds/ability2Sound.mp3");
-            //merge.play();
         }
         startAnimation = true;
         addObject(obj, actor.getX(), actor.getY());
@@ -905,6 +898,9 @@ public class MyWorld extends World
         removeObject(actor);
     }
 
+    /*
+     * perform animation to special ability actors
+     */
     private void abilityAnimation()
     {
         int[] x1 = new int[animatedHActors.size()];
@@ -965,8 +961,6 @@ public class MyWorld extends World
                 else
                 {
                     canMove = true;
-                    //left.get(i).setLocation(x1[i] - 1, animatedHActors.get(i).getY() + 5);
-                    //right.get(i).setLocation(x2[i] + 1, animatedHActors.get(i).getY() + 5);
                 }
             }
             for(int i = 0; i < up.size(); i++)
@@ -995,6 +989,9 @@ public class MyWorld extends World
         }
     }
 
+    /*
+     * check two equals actor and switch their position in the array
+     */
     private void checkEquals(Actor[][] arr, Actor actor, Actor newActor)
     {
         for(int i = 0; i < arr.length; i++)
@@ -1009,6 +1006,9 @@ public class MyWorld extends World
         }
     }
 
+    /*
+     * remove blocks and perform combo audio
+     */
     private void removeBlocks(int num, int limit, ArrayList<Actor> list, boolean delete)
     {
         if(num >= limit)
@@ -1021,8 +1021,6 @@ public class MyWorld extends World
                     if(list.get(i) != null)
                     {
                         removeFromArray(list.get(i));
-                        //frame = new Frame();
-                        //addObject(frame, list.get(i).getX(), list.get(i).getY());
                         removeObject(list.get(i));
                         clickedActors[0] = null;
                         clickedActors[1] = null;
@@ -1034,6 +1032,10 @@ public class MyWorld extends World
         }
     }
 
+    /*
+     * remove the actor from the array
+     * and perform special ability 
+     */
     public void removeFromArray(Actor[] actor)
     {
         TrailEffect trail, trail2;
@@ -1149,6 +1151,10 @@ public class MyWorld extends World
         clickedActors[1] = null;
     }
 
+    /*
+     * remove the actor from the array
+     * and perform special ability 
+     */
     public void removeFromArray(Actor actor)
     {
         
@@ -1212,8 +1218,10 @@ public class MyWorld extends World
                 }
             }
         }
-        //sound.play();
     }
+    /*
+     * move the blocks down with animation
+     */
     int i = 0;
     private void movingBlockAnimation()
     {
@@ -1238,6 +1246,9 @@ public class MyWorld extends World
         }
     }
 
+    /*
+     * create background of the world
+     */
     private void createBackground()
     {
         Background background = new Background();
@@ -1246,6 +1257,9 @@ public class MyWorld extends World
         setBackground(image);
     }
 
+    /*
+     * add line and white background to the world
+     */
     private void addLine()
     {
         for(int i = 0; i < 16; i++)
