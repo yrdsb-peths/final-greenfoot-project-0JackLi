@@ -112,7 +112,7 @@ public class MyWorld extends World
     private void initilizeActors()
     {
         blocks = new Actor[]{blockA = new BlockA(), blockB = new BlockB(), blockC = new BlockC(),
-            blockD = new BlockD()};
+        blockD = new BlockD(), blockE = new BlockE()};
     }
     
     /*
@@ -214,7 +214,7 @@ public class MyWorld extends World
                 if(blockPosition[i][u] == null)
                 {
                     initilizeActors();
-                    int rand = Greenfoot.getRandomNumber(blocks.length-1);
+                    int rand = Greenfoot.getRandomNumber(blocks.length);
                     blockPosition[i][u] = blocks[rand];
                     addObject(blocks[rand], x, y);
                 }
