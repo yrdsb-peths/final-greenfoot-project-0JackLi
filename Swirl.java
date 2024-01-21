@@ -30,6 +30,9 @@ public class Swirl extends Actor
         ((MyWorld) getWorld()).removeObject(this);
     }
     
+    /*
+     * remove an octagon shape of actor
+     */
     private void removeOctagonShape()
     {
         for(int i = 0; i < vertical; i++)

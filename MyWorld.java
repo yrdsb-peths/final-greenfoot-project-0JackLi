@@ -27,8 +27,6 @@ public class MyWorld extends World
     BlockC blockC;
     BlockD blockD;
     BlockE blockE;
-    BlockF blockF;
-    BlockG blockG;
     Line line;
     Line2 line2;
     Frame frame = new Frame();
@@ -114,7 +112,7 @@ public class MyWorld extends World
     private void initilizeActors()
     {
         blocks = new Actor[]{blockA = new BlockA(), blockB = new BlockB(), blockC = new BlockC(),
-            blockD = new BlockD(), blockE = new BlockE(), blockF = new BlockF()};
+            blockD = new BlockD()};
     }
     
     /*

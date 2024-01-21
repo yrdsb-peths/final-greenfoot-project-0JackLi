@@ -32,6 +32,10 @@ public class BlockC extends Actor
         }
         setAbilityImage();
     }
+    
+     /*
+     * set the ability image to the correct image
+     */
     private void setAbilityImage()
     {
         if(verticalAbility || horizontalAbility)

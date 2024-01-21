@@ -47,6 +47,9 @@ public class Star extends Actor
         }
     }
     
+    /*
+     * sets the transparency of an image
+     */
     public int getImageTransparency()
     {
         return image.getTransparency();

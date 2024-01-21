@@ -37,9 +37,11 @@ public class BlockA extends Actor
             setImage(origImage);
         }
         setAbilityImage();
-        //checkAbility();
     }
     
+    /*
+     * set the ability image to the correct image
+     */
     private void setAbilityImage()
     {
         if(verticalAbility || horizontalAbility)

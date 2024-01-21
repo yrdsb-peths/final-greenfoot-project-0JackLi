@@ -61,6 +61,9 @@ public class TrailEffect extends Actor
         }
     }
 
+    /*
+     * remove every specific actors that is touched
+     */
     private void removeBlocks()
     {
         ((MyWorld) getWorld()).removeFromArray(getOneObjectAtOffset(dx, dy, BlockA.class));
